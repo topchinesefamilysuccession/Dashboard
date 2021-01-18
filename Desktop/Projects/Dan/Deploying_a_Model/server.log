@@ -1,0 +1,13 @@
+nohup: ignoring input
+2021-01-18 07:46:40.006533: I tensorflow_serving/model_servers/server_core.cc:464] Adding/updating models.
+2021-01-18 07:46:40.013349: I tensorflow_serving/model_servers/server_core.cc:587]  (Re-)adding model: model
+2021-01-18 07:46:40.013440: I tensorflow_serving/model_servers/server_core.cc:587]  (Re-)adding model: model_sp500
+2021-01-18 07:46:40.013696: E tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:364] FileSystemStoragePathSource encountered a filesystem access error: Could not find base path /models/model for servable model
+2021-01-18 07:46:41.013808: E tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:364] FileSystemStoragePathSource encountered a filesystem access error: Could not find base path /models/model for servable model
+2021-01-18 07:46:42.013941: E tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:364] FileSystemStoragePathSource encountered a filesystem access error: Could not find base path /models/model for servable model
+2021-01-18 07:46:43.014024: E tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:364] FileSystemStoragePathSource encountered a filesystem access error: Could not find base path /models/model for servable model
+2021-01-18 07:46:44.014265: E tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:364] FileSystemStoragePathSource encountered a filesystem access error: Could not find base path /models/model for servable model
+2021-01-18 07:46:45.014413: E tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:364] FileSystemStoragePathSource encountered a filesystem access error: Could not find base path /models/model for servable model
+2021-01-18 07:46:46.014499: E tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:364] FileSystemStoragePathSource encountered a filesystem access error: Could not find base path /models/model for servable model
+2021-01-18 07:46:47.014708: E tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:364] FileSystemStoragePathSource encountered a filesystem access error: Could not find base path /models/model for servable model
+2021-01-18 07:46:48.014858: E tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:364] FileSystemStoragePathSource encountered a filesystem access error: Could not find base path /models/model for servable model

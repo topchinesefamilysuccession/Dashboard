@@ -1,0 +1,50 @@
+2021-01-17 16:34:10.778403: I tensorflow_serving/model_servers/server.cc:88] Building single TensorFlow model file config:  model_name: model model_base_path: ./models
+2021-01-17 16:34:10.778729: I tensorflow_serving/core/basic_manager.cc:279] Unload all remaining servables in the manager.
+Failed to start server. Error: Invalid argument: Expected model model to have an absolute path or URI; got base_path()=./models
+2021-01-17 16:34:31.150542: I tensorflow_serving/model_servers/server.cc:88] Building single TensorFlow model file config:  model_name: model model_base_path: /models
+2021-01-17 16:34:31.150765: I tensorflow_serving/model_servers/server_core.cc:464] Adding/updating models.
+2021-01-17 16:34:31.150781: I tensorflow_serving/model_servers/server_core.cc:587]  (Re-)adding model: model
+2021-01-17 16:34:31.167363: W tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:267] No versions of servable model found under base path /models. Did you forget to name your leaf directory as a number (eg. '/1/')?
+2021-01-17 16:34:32.167632: W tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:267] No versions of servable model found under base path /models. Did you forget to name your leaf directory as a number (eg. '/1/')?
+2021-01-17 16:34:33.167674: W tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:267] No versions of servable model found under base path /models. Did you forget to name your leaf directory as a number (eg. '/1/')?
+2021-01-17 16:34:34.167829: W tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:267] No versions of servable model found under base path /models. Did you forget to name your leaf directory as a number (eg. '/1/')?
+2021-01-17 16:34:35.167955: W tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:267] No versions of servable model found under base path /models. Did you forget to name your leaf directory as a number (eg. '/1/')?
+2021-01-17 16:34:49.694853: I tensorflow_serving/model_servers/server.cc:88] Building single TensorFlow model file config:  model_name: model model_base_path: /models/1
+2021-01-17 16:34:49.695040: I tensorflow_serving/model_servers/server_core.cc:464] Adding/updating models.
+2021-01-17 16:34:49.695059: I tensorflow_serving/model_servers/server_core.cc:587]  (Re-)adding model: model
+2021-01-17 16:34:49.695671: E tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:364] FileSystemStoragePathSource encountered a filesystem access error: Could not find base path /models/1 for servable model
+2021-01-17 16:34:50.695789: E tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:364] FileSystemStoragePathSource encountered a filesystem access error: Could not find base path /models/1 for servable model
+2021-01-17 16:34:51.695894: E tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:364] FileSystemStoragePathSource encountered a filesystem access error: Could not find base path /models/1 for servable model
+2021-01-17 16:34:52.696010: E tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:364] FileSystemStoragePathSource encountered a filesystem access error: Could not find base path /models/1 for servable model
+2021-01-17 16:34:53.696232: E tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:364] FileSystemStoragePathSource encountered a filesystem access error: Could not find base path /models/1 for servable model
+2021-01-17 16:34:54.696440: E tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:364] FileSystemStoragePathSource encountered a filesystem access error: Could not find base path /models/1 for servable model
+2021-01-17 16:34:55.696649: E tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:364] FileSystemStoragePathSource encountered a filesystem access error: Could not find base path /models/1 for servable model
+2021-01-17 16:34:56.696694: E tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:364] FileSystemStoragePathSource encountered a filesystem access error: Could not find base path /models/1 for servable model
+2021-01-17 16:35:22.074506: I tensorflow_serving/model_servers/server.cc:88] Building single TensorFlow model file config:  model_name: model model_base_path: /home/jorgelameira/Desktop/Projects/Dan/Deploying_a_Model/models/1
+2021-01-17 16:35:22.074701: I tensorflow_serving/model_servers/server_core.cc:464] Adding/updating models.
+2021-01-17 16:35:22.090386: I tensorflow_serving/model_servers/server_core.cc:587]  (Re-)adding model: model
+2021-01-17 16:35:22.091279: E tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:364] FileSystemStoragePathSource encountered a filesystem access error: Could not find base path /home/jorgelameira/Desktop/Projects/Dan/Deploying_a_Model/models/1 for servable model
+2021-01-17 16:35:23.091455: E tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:364] FileSystemStoragePathSource encountered a filesystem access error: Could not find base path /home/jorgelameira/Desktop/Projects/Dan/Deploying_a_Model/models/1 for servable model
+2021-01-17 16:35:24.091654: E tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:364] FileSystemStoragePathSource encountered a filesystem access error: Could not find base path /home/jorgelameira/Desktop/Projects/Dan/Deploying_a_Model/models/1 for servable model
+2021-01-17 16:35:40.715122: I tensorflow_serving/model_servers/server.cc:88] Building single TensorFlow model file config:  model_name: model model_base_path: /home/jorgelameira/Desktop/Projects/Dan/Deploying_a_Model/models/model
+2021-01-17 16:35:40.731053: I tensorflow_serving/model_servers/server_core.cc:464] Adding/updating models.
+2021-01-17 16:35:40.731135: I tensorflow_serving/model_servers/server_core.cc:587]  (Re-)adding model: model
+2021-01-17 16:35:40.832440: I tensorflow_serving/core/basic_manager.cc:740] Successfully reserved resources to load servable {name: model version: 1}
+2021-01-17 16:35:40.832536: I tensorflow_serving/core/loader_harness.cc:66] Approving load for servable version {name: model version: 1}
+2021-01-17 16:35:40.832575: I tensorflow_serving/core/loader_harness.cc:74] Loading servable version {name: model version: 1}
+2021-01-17 16:35:40.833881: I external/org_tensorflow/tensorflow/cc/saved_model/reader.cc:32] Reading SavedModel from: /home/jorgelameira/Desktop/Projects/Dan/Deploying_a_Model/models/model/1
+2021-01-17 16:35:40.839486: I external/org_tensorflow/tensorflow/cc/saved_model/reader.cc:55] Reading meta graph with tags { serve }
+2021-01-17 16:35:40.839600: I external/org_tensorflow/tensorflow/cc/saved_model/reader.cc:93] Reading SavedModel debug info (if present) from: /home/jorgelameira/Desktop/Projects/Dan/Deploying_a_Model/models/model/1
+2021-01-17 16:35:40.840403: I external/org_tensorflow/tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2021-01-17 16:35:40.892570: I external/org_tensorflow/tensorflow/cc/saved_model/loader.cc:206] Restoring SavedModel bundle.
+2021-01-17 16:35:40.917816: I external/org_tensorflow/tensorflow/core/platform/profile_utils/cpu_utils.cc:112] CPU Frequency: 2799925000 Hz
+2021-01-17 16:35:40.984427: I external/org_tensorflow/tensorflow/cc/saved_model/loader.cc:190] Running initialization op on SavedModel bundle at path: /home/jorgelameira/Desktop/Projects/Dan/Deploying_a_Model/models/model/1
+2021-01-17 16:35:40.988216: I external/org_tensorflow/tensorflow/cc/saved_model/loader.cc:277] SavedModel load for tags { serve }; Status: success: OK. Took 154339 microseconds.
+2021-01-17 16:35:40.988736: I tensorflow_serving/servables/tensorflow/saved_model_warmup_util.cc:59] No warmup data file found at /home/jorgelameira/Desktop/Projects/Dan/Deploying_a_Model/models/model/1/assets.extra/tf_serving_warmup_requests
+2021-01-17 16:35:40.989103: I tensorflow_serving/core/loader_harness.cc:87] Successfully loaded servable version {name: model version: 1}
+2021-01-17 16:35:40.993659: I tensorflow_serving/model_servers/server.cc:371] Running gRPC ModelServer at 0.0.0.0:8500 ...
+2021-01-17 16:35:40.995882: I tensorflow_serving/model_servers/server.cc:391] Exporting HTTP/REST API at:localhost:8501 ...
+[evhttp_server.cc : 238] NET_LOG: Entering the event loop ...
+Failed to start server. Error: Not found: ./models/models.config; No such file or directory
+Failed to start server. Error: Not found: ./models/models.config; No such file or directory
