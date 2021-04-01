@@ -6,6 +6,7 @@ from dash.exceptions import PreventUpdate
 from app import app 
 from apps import backtesting, allocations, models, strategies
 
+server = app.server
 
 app.layout = html.Div([
     dcc.Location(id="url", refresh=False),
