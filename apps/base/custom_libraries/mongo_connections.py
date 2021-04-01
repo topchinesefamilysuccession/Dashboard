@@ -6,7 +6,7 @@ import pandas as pd
 import datetime
 import dns
 import os
-from .config import get_credential
+
 
 USERNAME = os.environ["USERNAME"]
 PASSWORD = os.environ["PASSWORD"]
