@@ -8,11 +8,18 @@ import dns
 import os
 from .config import get_credential
 
+USERNAME = os.environ["USERNAME"]
+PASSWORD = os.environ["PASSWORD"]
+CLUSTER = os.environ["CLUSTER"]
+
 class myMongo():
     def __init__(self, db_name):
-        self.user = get_credential("USERNAME")
-        self.pwd = get_credential("PASSWORD")
-        self.cluster_name = get_credential("CLUSTER")
+        
+        self.user = USERNAME
+        self.pwd = PASSWORD
+        self.cluster_name = CLUSTER
+        
+        
         self.db_name = db_name
         self.cnn_str = f"mongodb+srv://{self.user}:{self.pwd}@{self.cluster_name}/{self.db_name}?retryWrites=true&w=majority"
         self.cluster = MongoClient(self.cnn_str, retryWrites=False)
