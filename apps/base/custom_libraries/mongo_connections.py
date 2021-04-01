@@ -5,8 +5,7 @@ import json
 import pandas as pd
 import datetime
 import dns
-import os
-
+import os 
 
 USERNAME = os.environ["USERNAME"]
 PASSWORD = os.environ["PASSWORD"]
