@@ -5,20 +5,14 @@ import json
 import pandas as pd
 import datetime
 import dns
-import os 
-
-USERNAME = os.environ["USERNAME"]
-PASSWORD = os.environ["PASSWORD"]
-CLUSTER = os.environ["CLUSTER"]
+import os
+from .config import get_credential
 
 class myMongo():
     def __init__(self, db_name):
-        
-        self.user = USERNAME
-        self.pwd = PASSWORD
-        self.cluster_name = CLUSTER
-        
-        
+        self.user = get_credential("USERNAME")
+        self.pwd = get_credential("PASSWORD")
+        self.cluster_name = get_credential("CLUSTER")
         self.db_name = db_name
         self.cnn_str = f"mongodb+srv://{self.user}:{self.pwd}@{self.cluster_name}/{self.db_name}?retryWrites=true&w=majority"
         self.cluster = MongoClient(self.cnn_str, retryWrites=False)

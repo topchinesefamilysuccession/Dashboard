@@ -29,7 +29,7 @@ class Strategies():
         
 
     def get_strategies_names(self):
-        return  {k:v for k,v in self.strategies_description[["strategy_name","strategy_id"]].values}
+        return  {f"{v} - {k}":v for k,v in self.strategies_description[["strategy_name","strategy_id"]].values}
 
     def get_strategies_details(self, details="description", filter=None):
         
