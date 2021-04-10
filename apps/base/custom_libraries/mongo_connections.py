@@ -5,7 +5,7 @@ import json
 import pandas as pd
 import datetime
 import dns
-import os
+import os 
 
 class myMongo():
     def __init__(self, db_name):
