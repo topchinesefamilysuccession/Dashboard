@@ -31,15 +31,22 @@ class Strategies():
     def get_strategies_names(self):
         return  {f"{v} - {k}":v for k,v in self.strategies_description[["strategy_name","strategy_id"]].values}
 
-    def get_strategies_details(self, details="description", filter=None):
+    def get_strategies_details(self, details="description", filter=None, language="en"):
         
         keys = ["strategy_id"]
         
         if details == "description":
-            keys.extend(["strategy_description"])
+            if language == "en":
+                keys.extend(["strategy_description"])
+            else:
+                keys.extend(["strategy_description-cn"])
         elif details == "parameters":
-            keys.extend(["rebalancing_frequency", "markets", "asset_classes", "period"])
+            if language == "en":
+                keys.extend(["rebalancing_frequency", "markets", "asset_classes", "period"])
+            elif language == "cn":
+                keys.extend(["rebalancing_frequency-cn", "markets", "asset_classes-cn", "period"])
 
+        print(keys)
         df = self.strategies_description[keys]
         
         if filter:

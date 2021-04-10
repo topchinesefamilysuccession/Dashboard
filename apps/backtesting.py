@@ -18,7 +18,7 @@ SPINNER = "cube"
 strategies = Strategies()
 
 layout = html.Div([
-
+    
     html.Div([
         html.Div([
                 html.H4("Strategies"),
@@ -46,6 +46,7 @@ layout = html.Div([
 
 
     html.Div([
+        
         html.Div([
                 html.Div([html.H3("Drawdown: 2%", id="drawdown-percent")]),
                 html.Div([html.H3("PnL: 20%", id="pnl-percent")]),
@@ -90,20 +91,31 @@ layout = html.Div([
 @app.callback(
     [Output("strategies-description", "children"), Output("strategies-parameters", "children"), Output("pnl-percent", "children"), 
     Output("drawdown-percent", "children"), Output("main-chart", "figure"), Output("strategies-summary", "children"), Output("assets-pie", "figure")],
-    [Input("strategies-list", "value"), Input("graphs-options", "value")]
+    [Input("strategies-list", "value"), Input("graphs-options", "value"), Input("language", "value")]
 )
 
-def render_strategies_description(strategy_id, graphs_options):
+def render_strategies_description(strategy_id, graphs_options, language):
     if strategy_id == None:
         raise PreventUpdate
     
+    if language == ["cn"]:
+        language = "cn"
+    else:
+        language = "en"
+    
     #Descriptions and Parameters
-    descriptions = strategies.get_strategies_details(details="description", filter=[strategy_id])
-    descriptions_markdown = descriptions["strategy_description"].values[0]
+    descriptions = strategies.get_strategies_details(details="description", filter=[strategy_id], language=language)
+
+    if language == "cn":
+        desc_key = "strategy_description-cn"
+    else:
+        desc_key = "strategy_description"
+
+    descriptions_markdown = descriptions[desc_key].values[0]
     
-    parameters = strategies.get_strategies_details(details="parameters", filter=[strategy_id])
+    parameters = strategies.get_strategies_details(details="parameters", filter=[strategy_id], language=language)
     
-    parameters_markdown = build_parameters_markdown(parameters)
+    parameters_markdown = build_parameters_markdown(parameters, language)
 
 
     #PnL and Dradown
