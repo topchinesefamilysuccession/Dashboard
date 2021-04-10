@@ -43,25 +43,25 @@ def build_strategy_summary(stats, language="en"):
     final_portfolio_value =  stats["portfolio_value"].values[0]
     
     if language == "en":
-        pnl = "PnL" 
-        dd = "Max Drawdown"
-        final_prt = "Final Portfolio Value"
+        pnl_label = "PnL" 
+        dd_label = "Max Drawdown"
+        final_prt_label = "Final Portfolio Value"
     elif language == "cn":
-        pnl = "盈亏"
-        dd = "最大下探"
-        final_prt = "最终日资产价值"
+        pnl_label = "盈亏"
+        dd_label = "最大下探"
+        final_prt_label = "最终日资产价值"
 
 
     summary =  [html.P(children=[
-                    html.Strong(f"{pnl}: "),
+                    html.Strong(f"{pnl_label}: "),
                     f"{pnl:,.2f} $"
                                 ]),
                 html.P(children=[
-                    html.Strong(f"{dd}: "),
+                    html.Strong(f"{dd_label}: "),
                     f"{max_dd:,.2f} $"
                                 ]),
                 html.P(children=[
-                    html.Strong(f"{final_prt}: "),
+                    html.Strong(f"{final_prt_label}: "),
                     f"{final_portfolio_value:,.2f} $"
                                 ]),
     
