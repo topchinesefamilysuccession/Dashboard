@@ -37,21 +37,31 @@ def build_parameters_markdown(parameters, language="en"):
     return markdown
 
 
-def build_strategy_summary(stats):
+def build_strategy_summary(stats, language="en"):
     pnl = stats["pnl"].values[0]
     max_dd = stats["max_dd"].values[0]
     final_portfolio_value =  stats["portfolio_value"].values[0]
     
+    if language == "en":
+        pnl = "PnL" 
+        dd = "Max Drawdown"
+        final_prt = "Final Portfolio Value"
+    elif language == "cn":
+        pnl = "盈亏"
+        dd = "最大下探"
+        final_prt = "最终日资产价值"
+
+
     summary =  [html.P(children=[
-                    html.Strong("PnL: "),
+                    html.Strong(f"{pnl}: "),
                     f"{pnl:,.2f} $"
                                 ]),
                 html.P(children=[
-                    html.Strong("Max Drawdown: "),
+                    html.Strong(f"{dd}: "),
                     f"{max_dd:,.2f} $"
                                 ]),
                 html.P(children=[
-                    html.Strong("Final Portfolio Value: "),
+                    html.Strong(f"{final_prt}: "),
                     f"{final_portfolio_value:,.2f} $"
                                 ]),
     

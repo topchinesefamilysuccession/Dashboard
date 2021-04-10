@@ -133,7 +133,7 @@ def render_strategies_description(strategy_id, graphs_options, language):
 
     # Strategy Summary
 
-    strategy_summary = build_strategy_summary(stats)
+    strategy_summary = build_strategy_summary(stats, language)
 
     #Portfolio Value Chart
     prt_value = strategies.get_strategies_portfolio_value(filter=[strategy_id])
