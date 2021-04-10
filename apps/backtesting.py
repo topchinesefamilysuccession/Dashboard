@@ -30,13 +30,13 @@ layout = html.Div([
  
             html.Div([
                 dcc.Tabs([
-                    dcc.Tab(className="custom-tab",label="Description", children=[
+                    dcc.Tab(className="custom-tab",label="Description", id="description-tab", children=[
                         dcc.Markdown("", id="strategies-description")
                     ]),
-                    dcc.Tab(className="custom-tab",label="Parameters", children=[
+                    dcc.Tab(className="custom-tab",label="Parameters", id="paremeters-tab", children=[
                         html.Div(children=["rebalancing_frequency,markets,ac,period"], id="strategies-parameters")
                     ]),
-                    dcc.Tab(className="custom-tab",label="Other", children=[
+                    dcc.Tab(className="custom-tab",label="Other", id="others-tab", children=[
                         html.P("Not Sure")
                     ])
                 ], className="custom-tabs")
@@ -90,7 +90,9 @@ layout = html.Div([
 
 @app.callback(
     [Output("strategies-description", "children"), Output("strategies-parameters", "children"), Output("pnl-percent", "children"), 
-    Output("drawdown-percent", "children"), Output("main-chart", "figure"), Output("strategies-summary", "children"), Output("assets-pie", "figure")],
+    Output("drawdown-percent", "children"), Output("main-chart", "figure"), 
+    Output("strategies-summary", "children"), Output("assets-pie", "figure"), 
+    Output("description-tab", "label"), Output("paremeters-tab", "label"), Output("others-tab", "label")],
     [Input("strategies-list", "value"), Input("graphs-options", "value"), Input("language", "value")]
 )
 
@@ -108,8 +110,12 @@ def render_strategies_description(strategy_id, graphs_options, language):
 
     if language == "cn":
         desc_key = "strategy_description-cn"
+        pnl_label = "盈亏"
+        dd_label = "下探"
     else:
         desc_key = "strategy_description"
+        pnl_label = "PnL"
+        dd_label = "Drawdown"
 
     descriptions_markdown = descriptions[desc_key].values[0]
     
@@ -122,8 +128,8 @@ def render_strategies_description(strategy_id, graphs_options, language):
     stats = strategies.get_strategies_stats(filter=[strategy_id])
 
     
-    pnl = f"PnL: {stats['percentual_pnl'].values[0] * 100:.2f}%"
-    dd = f"Drawdown: {stats['percentual_dd'].values[0] * 100:.2f}%"
+    pnl = f"{pnl_label}: {stats['percentual_pnl'].values[0] * 100:.2f}%"
+    dd = f"{dd_label}: {stats['percentual_dd'].values[0] * 100:.2f}%"
 
     # Strategy Summary
 
@@ -154,6 +160,15 @@ def render_strategies_description(strategy_id, graphs_options, language):
 
     assets_pie_fig = assets_pie_fig.get_chart()
 
-    return descriptions_markdown, parameters_markdown, pnl, dd, prt_value_fig, strategy_summary,assets_pie_fig
+    if language == "en":
+        description_tab = "Description" 
+        paramenters_tab = "Parameters"
+        others_tab = "Other"
+    elif language == "cn":
+        description_tab = "简介" 
+        paramenters_tab = "指标参数"
+        others_tab = "其他"
+
+    return descriptions_markdown, parameters_markdown, pnl, dd, prt_value_fig, strategy_summary,assets_pie_fig, description_tab, paramenters_tab, others_tab
 
 
