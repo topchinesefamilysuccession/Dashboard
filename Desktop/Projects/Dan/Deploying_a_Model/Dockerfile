@@ -51,6 +51,11 @@ ENV MODEL_NAME=model
 
 COPY models/model models/model
 COPY models/model_sp500 models/model_sp500
+COPY models/dnn_middle_layer models/dnn_middle_layer
+COPY models/dnn_multiple_layers models/dnn_multiple_layers
+COPY models/simple_lstm models/simple_lstm
+COPY models/conv_lstm models/conv_lstm
+
 COPY config/models.conf config/models.conf
 
 

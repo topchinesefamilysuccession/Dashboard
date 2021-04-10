@@ -1,13 +1,44 @@
 nohup: ignoring input
-2021-01-18 07:46:40.006533: I tensorflow_serving/model_servers/server_core.cc:464] Adding/updating models.
-2021-01-18 07:46:40.013349: I tensorflow_serving/model_servers/server_core.cc:587]  (Re-)adding model: model
-2021-01-18 07:46:40.013440: I tensorflow_serving/model_servers/server_core.cc:587]  (Re-)adding model: model_sp500
-2021-01-18 07:46:40.013696: E tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:364] FileSystemStoragePathSource encountered a filesystem access error: Could not find base path /models/model for servable model
-2021-01-18 07:46:41.013808: E tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:364] FileSystemStoragePathSource encountered a filesystem access error: Could not find base path /models/model for servable model
-2021-01-18 07:46:42.013941: E tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:364] FileSystemStoragePathSource encountered a filesystem access error: Could not find base path /models/model for servable model
-2021-01-18 07:46:43.014024: E tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:364] FileSystemStoragePathSource encountered a filesystem access error: Could not find base path /models/model for servable model
-2021-01-18 07:46:44.014265: E tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:364] FileSystemStoragePathSource encountered a filesystem access error: Could not find base path /models/model for servable model
-2021-01-18 07:46:45.014413: E tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:364] FileSystemStoragePathSource encountered a filesystem access error: Could not find base path /models/model for servable model
-2021-01-18 07:46:46.014499: E tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:364] FileSystemStoragePathSource encountered a filesystem access error: Could not find base path /models/model for servable model
-2021-01-18 07:46:47.014708: E tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:364] FileSystemStoragePathSource encountered a filesystem access error: Could not find base path /models/model for servable model
-2021-01-18 07:46:48.014858: E tensorflow_serving/sources/storage_path/file_system_storage_path_source.cc:364] FileSystemStoragePathSource encountered a filesystem access error: Could not find base path /models/model for servable model
+2021-01-19 07:30:53.282267: I tensorflow_serving/model_servers/server_core.cc:464] Adding/updating models.
+2021-01-19 07:30:53.282331: I tensorflow_serving/model_servers/server_core.cc:587]  (Re-)adding model: model
+2021-01-19 07:30:53.282341: I tensorflow_serving/model_servers/server_core.cc:587]  (Re-)adding model: model_sp500
+2021-01-19 07:30:53.282347: I tensorflow_serving/model_servers/server_core.cc:587]  (Re-)adding model: dnn_middle_layer
+2021-01-19 07:30:53.383211: I tensorflow_serving/core/basic_manager.cc:740] Successfully reserved resources to load servable {name: model_sp500 version: 1}
+2021-01-19 07:30:53.383323: I tensorflow_serving/core/loader_harness.cc:66] Approving load for servable version {name: model_sp500 version: 1}
+2021-01-19 07:30:53.383386: I tensorflow_serving/core/loader_harness.cc:74] Loading servable version {name: model_sp500 version: 1}
+2021-01-19 07:30:53.383500: I external/org_tensorflow/tensorflow/cc/saved_model/reader.cc:32] Reading SavedModel from: /home/jorgelameira/Desktop/Projects/Dan/Deploying_a_Model/models/model_sp500/1
+2021-01-19 07:30:53.388550: I external/org_tensorflow/tensorflow/cc/saved_model/reader.cc:55] Reading meta graph with tags { serve }
+2021-01-19 07:30:53.388631: I external/org_tensorflow/tensorflow/cc/saved_model/reader.cc:93] Reading SavedModel debug info (if present) from: /home/jorgelameira/Desktop/Projects/Dan/Deploying_a_Model/models/model_sp500/1
+2021-01-19 07:30:53.388833: I external/org_tensorflow/tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2021-01-19 07:30:53.438560: I external/org_tensorflow/tensorflow/cc/saved_model/loader.cc:206] Restoring SavedModel bundle.
+2021-01-19 07:30:53.461985: I external/org_tensorflow/tensorflow/core/platform/profile_utils/cpu_utils.cc:112] CPU Frequency: 2799925000 Hz
+2021-01-19 07:30:53.482803: I tensorflow_serving/core/basic_manager.cc:740] Successfully reserved resources to load servable {name: model version: 1}
+2021-01-19 07:30:53.482852: I tensorflow_serving/core/loader_harness.cc:66] Approving load for servable version {name: model version: 1}
+2021-01-19 07:30:53.482863: I tensorflow_serving/core/loader_harness.cc:74] Loading servable version {name: model version: 1}
+2021-01-19 07:30:53.482882: I external/org_tensorflow/tensorflow/cc/saved_model/reader.cc:32] Reading SavedModel from: /home/jorgelameira/Desktop/Projects/Dan/Deploying_a_Model/models/model/1
+2021-01-19 07:30:53.484184: I external/org_tensorflow/tensorflow/cc/saved_model/reader.cc:55] Reading meta graph with tags { serve }
+2021-01-19 07:30:53.484216: I external/org_tensorflow/tensorflow/cc/saved_model/reader.cc:93] Reading SavedModel debug info (if present) from: /home/jorgelameira/Desktop/Projects/Dan/Deploying_a_Model/models/model/1
+2021-01-19 07:30:53.487603: I external/org_tensorflow/tensorflow/cc/saved_model/loader.cc:206] Restoring SavedModel bundle.
+2021-01-19 07:30:53.489119: I external/org_tensorflow/tensorflow/cc/saved_model/loader.cc:190] Running initialization op on SavedModel bundle at path: /home/jorgelameira/Desktop/Projects/Dan/Deploying_a_Model/models/model_sp500/1
+2021-01-19 07:30:53.493970: I external/org_tensorflow/tensorflow/cc/saved_model/loader.cc:277] SavedModel load for tags { serve }; Status: success: OK. Took 110465 microseconds.
+2021-01-19 07:30:53.494423: I tensorflow_serving/servables/tensorflow/saved_model_warmup_util.cc:59] No warmup data file found at /home/jorgelameira/Desktop/Projects/Dan/Deploying_a_Model/models/model_sp500/1/assets.extra/tf_serving_warmup_requests
+2021-01-19 07:30:53.494916: I tensorflow_serving/core/loader_harness.cc:87] Successfully loaded servable version {name: model_sp500 version: 1}
+2021-01-19 07:30:53.513229: I external/org_tensorflow/tensorflow/cc/saved_model/loader.cc:190] Running initialization op on SavedModel bundle at path: /home/jorgelameira/Desktop/Projects/Dan/Deploying_a_Model/models/model/1
+2021-01-19 07:30:53.518086: I external/org_tensorflow/tensorflow/cc/saved_model/loader.cc:277] SavedModel load for tags { serve }; Status: success: OK. Took 35198 microseconds.
+2021-01-19 07:30:53.518592: I tensorflow_serving/servables/tensorflow/saved_model_warmup_util.cc:59] No warmup data file found at /home/jorgelameira/Desktop/Projects/Dan/Deploying_a_Model/models/model/1/assets.extra/tf_serving_warmup_requests
+2021-01-19 07:30:53.518915: I tensorflow_serving/core/loader_harness.cc:87] Successfully loaded servable version {name: model version: 1}
+2021-01-19 07:30:53.582976: I tensorflow_serving/core/basic_manager.cc:740] Successfully reserved resources to load servable {name: dnn_middle_layer version: 1}
+2021-01-19 07:30:53.583036: I tensorflow_serving/core/loader_harness.cc:66] Approving load for servable version {name: dnn_middle_layer version: 1}
+2021-01-19 07:30:53.583062: I tensorflow_serving/core/loader_harness.cc:74] Loading servable version {name: dnn_middle_layer version: 1}
+2021-01-19 07:30:53.583100: I external/org_tensorflow/tensorflow/cc/saved_model/reader.cc:32] Reading SavedModel from: /home/jorgelameira/Desktop/Projects/Dan/Deploying_a_Model/models/dnn_middle_layer/1
+2021-01-19 07:30:53.586109: I external/org_tensorflow/tensorflow/cc/saved_model/reader.cc:55] Reading meta graph with tags { serve }
+2021-01-19 07:30:53.586174: I external/org_tensorflow/tensorflow/cc/saved_model/reader.cc:93] Reading SavedModel debug info (if present) from: /home/jorgelameira/Desktop/Projects/Dan/Deploying_a_Model/models/dnn_middle_layer/1
+2021-01-19 07:30:53.597175: I external/org_tensorflow/tensorflow/cc/saved_model/loader.cc:206] Restoring SavedModel bundle.
+2021-01-19 07:30:53.643728: I external/org_tensorflow/tensorflow/cc/saved_model/loader.cc:190] Running initialization op on SavedModel bundle at path: /home/jorgelameira/Desktop/Projects/Dan/Deploying_a_Model/models/dnn_middle_layer/1
+2021-01-19 07:30:53.647874: I external/org_tensorflow/tensorflow/cc/saved_model/loader.cc:277] SavedModel load for tags { serve }; Status: success: OK. Took 64769 microseconds.
+2021-01-19 07:30:53.648766: I tensorflow_serving/servables/tensorflow/saved_model_warmup_util.cc:59] No warmup data file found at /home/jorgelameira/Desktop/Projects/Dan/Deploying_a_Model/models/dnn_middle_layer/1/assets.extra/tf_serving_warmup_requests
+2021-01-19 07:30:53.649376: I tensorflow_serving/core/loader_harness.cc:87] Successfully loaded servable version {name: dnn_middle_layer version: 1}
+2021-01-19 07:30:53.651136: I tensorflow_serving/model_servers/server.cc:371] Running gRPC ModelServer at 0.0.0.0:8500 ...
+[evhttp_server.cc : 238] NET_LOG: Entering the event loop ...
+2021-01-19 07:30:53.652016: I tensorflow_serving/model_servers/server.cc:391] Exporting HTTP/REST API at:localhost:8501 ...
