@@ -25,6 +25,8 @@ class Strategies():
         self.strategies_description = db.find("strategies_description", "all", None)
         self.strategies_general_stats = db.find("strategies_general_stats", "all", None)
         self.strategies_portfolio_value = db.find("strategies_portfolio_value", "all", None)
+        self.strategies_description["id"] = self.strategies_description["strategy_id"].apply(lambda x : float(x.split("S")[-1]))
+        self.strategies_description.sort_values("id",inplace=True)
         db.close_connection()
         
 
@@ -65,7 +67,7 @@ class Strategies():
         df = self.strategies_portfolio_value
         if filter:
             df = self._filter_df_by_id(df, filter)
-        
+        df.sort_values("date", inplace=True)
         return df
 
     def get_assets_mean_distribution(self, filter, top_size=5):
