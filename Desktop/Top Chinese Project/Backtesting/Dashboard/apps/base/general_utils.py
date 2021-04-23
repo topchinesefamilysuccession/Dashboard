@@ -2,8 +2,13 @@ import dash_html_components as html
 ipsum_lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
 
 
-def build_parameters_markdown(parameters):
-    rebalancing_frequency, markets, asset_classes,period = parameters[["rebalancing_frequency","markets","asset_classes","period"]].values[0]
+def build_parameters_markdown(parameters, language="en"):
+    if language == "en":
+        keys = ["rebalancing_frequency","markets","asset_classes","period"]
+    elif language =="cn":
+        keys = ["rebalancing_frequency-cn","markets","asset_classes-cn","period"]
+
+    rebalancing_frequency, markets, asset_classes,period = parameters[keys].values[0]
 
 
     markdown = [html.P(children=[

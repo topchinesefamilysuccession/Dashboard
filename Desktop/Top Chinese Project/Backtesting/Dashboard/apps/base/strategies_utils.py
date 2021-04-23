@@ -25,23 +25,35 @@ class Strategies():
         self.strategies_description = db.find("strategies_description", "all", None)
         self.strategies_general_stats = db.find("strategies_general_stats", "all", None)
         self.strategies_portfolio_value = db.find("strategies_portfolio_value", "all", None)
+        self.strategies_returns = db.find("strategies_returns", "all", None)
+        self.strategies_trades = db.find("strategies_trades", "all", None)
+
+        self.strategies_description["id"] = self.strategies_description["strategy_id"].apply(lambda x : float(x.split("S")[-1]))
+        self.strategies_description.sort_values("id",inplace=True)
+        self.strategies_trades.sort_values("date", inplace=True)
         db.close_connection()
         
 
     def get_strategies_names(self):
         return  {f"{v} - {k}":v for k,v in self.strategies_description[["strategy_name","strategy_id"]].values}
 
-    def get_strategies_details(self, details="description", filter=None):
+    def get_strategies_details(self, details="description", filter=None, language="en"):
         
         keys = ["strategy_id"]
         
         if details == "description":
-            keys.extend(["strategy_description"])
+            if language == "en":
+                keys.extend(["strategy_description"])
+            else:
+                keys.extend(["strategy_description-cn"])
         elif details == "parameters":
-            keys.extend(["rebalancing_frequency", "markets", "asset_classes", "period"])
+            if language == "en":
+                keys.extend(["rebalancing_frequency", "markets", "asset_classes", "period"])
+            elif language == "cn":
+                keys.extend(["rebalancing_frequency-cn", "markets", "asset_classes-cn", "period"])
 
-        df = self.strategies_description[keys]
         
+        df = self.strategies_description[keys]
         if filter:
             df = self._filter_df_by_id(df, filter)
         return  df
@@ -58,7 +70,7 @@ class Strategies():
         df = self.strategies_portfolio_value
         if filter:
             df = self._filter_df_by_id(df, filter)
-        
+            df.sort_values("date", inplace=True)
         return df
 
     def get_assets_mean_distribution(self, filter, top_size=5):
@@ -76,8 +88,18 @@ class Strategies():
         df = df_sorted[:top_size]
         
         df["other"] = df_sorted[top_size:].sum()
-        
 
         return df
-            
+
+    def get_trades(self, filter):
+        df = self.strategies_trades.copy()
+
+        if filter:
+            df = self._filter_df_by_id(df, filter)
+        
+        df.dropna(axis=1, inplace=True)
+        df["date"] = df["date"].dt.date
+        df = df[["date", "symbol", "amount", "price", "value"]]
+       
+        return df            
 

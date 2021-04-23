@@ -20,10 +20,11 @@ app.layout = html.Div([
         ],className="nav_links")
     ]),
     
-        html.Button("Build a Strategy", id="build-strat-btn")
-
+        html.Button("Build a Strategy", id="build-strat-btn"),
+        
     ]),
-    
+    dcc.Checklist(id="language", options=[{"label":"Mandarin", "value":"cn"}],inputStyle={"margin-right": "9px"}
+),
     html.Div(id="page-content")
 ])
 
