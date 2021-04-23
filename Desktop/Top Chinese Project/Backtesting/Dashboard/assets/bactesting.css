@@ -1,5 +1,5 @@
 body{
-    height : 150vh;
+    height : 175vh;
 }
 
 
@@ -80,6 +80,11 @@ body{
 
 }
 
+.bottom-content{
+    display: flex;
+    flex-direction: row;
+    height: 70vh ;
+}
 
 .trades-content{
     margin:0 5%;
@@ -92,6 +97,45 @@ body{
     min-height: 600px;
 }
 
+.returns-content{
+    margin:0 3.5%;
+    background-color: #f9f9f9;
+    text-align: center;
+    box-shadow:2px 2px 2px lightgrey;    
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    min-height: 600px;
+}
+
+
+.dash-spreadsheet-menu div{
+    margin-left: 85%;
+    margin-bottom: 2%;
+}
+
+.export{
+    padding:9px 25px;
+    background-color: rgba(0,136,169,1);
+    border:none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    color:#edf0f1;
+    text-decoration: None;
+}
+.export:hover {
+    background-color: rgba(0,136,169,0.8);
+}
+
+.trades-table-div{
+    position: relative;
+    width: 90%;
+    align-self: center;
+    margin-bottom: 3%;
+}
 
 #graphs-options{
     text-align: left;
@@ -120,8 +164,14 @@ body{
 
 #strategies-summary{
     text-align: left;
-    margin:10% 5% 0% 5%;
+    margin:10% 6% 0% 5%;
 }
+
+#strategies-summary p {
+    text-align: right;
+    white-space: nowrap;
+}
+
 
 #assets-pie{
     flex-grow: 1;
@@ -129,3 +179,10 @@ body{
     margin-left: 20%;
 }
 
+#trades-report-header{
+    margin-left: 5%;
+    margin-bottom: 2%;
+    margin-top: 2%;
+    text-align: left;
+    font-weight: 200;
+}

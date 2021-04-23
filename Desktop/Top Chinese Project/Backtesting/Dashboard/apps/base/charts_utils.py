@@ -50,7 +50,7 @@ class Chart():
 
     def draw_pie_chart(self, df, title=None):
         self.fig.add_trace(go.Pie(labels=df.index, values=df.values,textinfo='label',
-    textposition='inside', title=title))
+    textposition='inside', title=title, hole=0.3))
         
 
     def get_chart(self):

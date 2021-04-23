@@ -1,4 +1,7 @@
 import dash_html_components as html
+from dash_table import FormatTemplate
+
+
 ipsum_lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
 
 
@@ -59,3 +62,17 @@ def build_strategy_summary(stats):
 
 
     return summary
+
+
+def build_trades_columns(strategies):
+    money = FormatTemplate.money(2)
+    styled_columns = []
+
+    for i in strategies.get_trades(filter=["S1"]).columns:
+        name = i[0].upper() + i[1:]    
+        if i in ["price", "value"]:
+            styled_column = {"name": name, "id": i, "type":"numeric", "format":money} 
+        else:
+            styled_column = {"name": name, "id": i} 
+        styled_columns.append(styled_column)
+    return styled_columns

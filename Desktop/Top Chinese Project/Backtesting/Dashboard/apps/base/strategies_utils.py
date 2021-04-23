@@ -31,6 +31,7 @@ class Strategies():
         self.strategies_description["id"] = self.strategies_description["strategy_id"].apply(lambda x : float(x.split("S")[-1]))
         self.strategies_description.sort_values("id",inplace=True)
         self.strategies_trades.sort_values("date", inplace=True)
+    
         db.close_connection()
         
 
@@ -100,6 +101,6 @@ class Strategies():
         df.dropna(axis=1, inplace=True)
         df["date"] = df["date"].dt.date
         df = df[["date", "symbol", "amount", "price", "value"]]
-       
+
         return df            
 

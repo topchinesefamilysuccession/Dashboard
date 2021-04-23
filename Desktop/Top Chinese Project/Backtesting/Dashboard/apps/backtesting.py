@@ -6,7 +6,7 @@ import dash_table
 from app import app
 
 from .base.strategies_utils import Strategies
-from .base.general_utils import ipsum_lorem, build_parameters_markdown, build_strategy_summary
+from .base.general_utils import ipsum_lorem, build_parameters_markdown, build_strategy_summary, build_trades_columns
 from .base.charts_utils import Chart, init_chart
 
 
@@ -87,13 +87,33 @@ layout = html.Div([
 
     html.Div([
         html.Div([
-            html.H4("Trades"), 
-            dash_table.DataTable(
-                id="trades-table", 
-                columns = [{"name": i, "id": i} for i in strategies.get_trades(filter=["S1"]).columns]
-            )
+            html.H4("Trades Report", id="trades-report-header"),
+            html.Div([
+                dash_table.DataTable(
+                    id="trades-table", 
+                    columns = build_trades_columns(strategies),
+                    page_size=14,
+                    filter_action="native",
+                    sort_action="native",
+                    sort_mode="multi",
+                    export_format="csv", 
+                    style_table={'width': '100%'},
+                    style_header={'textAlign': 'center'},
+                    style_cell_conditional=[
+                                            {
+                                                'if': {'column_id': c},
+                                                'textAlign': 'center'
+                                            } for c in ['date', 'symbol']
+                                        ],
+                ) 
+            ], className="trades-table-div")
 
-        ], className="trades-content")
+        ], className="trades-content"),
+
+        # html.Div([
+        #     html.H4("Returns per month")
+        # ], className="returns-content")
+
     ], className="bottom-content")
 ])
 
