@@ -4,18 +4,19 @@ from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
 
 from app import app 
-from apps import backtesting, allocations, models, strategies
+from apps import backtesting, allocations, models, strategies, sentiment
 
 
 app.layout = html.Div([
     dcc.Location(id="url", refresh=False),
     
     html.Header([
+        # html.Img(src=app.get_asset_url('/img/logo.svg')),
         html.H2("Top Chinese Strategies", className="logo"),
         html.Nav([
         html.Ul([
             html.Li([dcc.Link('Backtesting', href='/apps/backtesting')]),
-            html.Li([dcc.Link('Allocations', href='/apps/allocations')]),
+            html.Li([dcc.Link('Sentiment', href='/apps/sentiment')]),
             html.Li([dcc.Link('Models', href='/apps/models')]),
         ],className="nav_links")
     ]),
@@ -52,6 +53,8 @@ def display_page(pathname):
         return backtesting.layout
     elif pathname == "/apps/allocations":
         return allocations.layout
+    elif pathname == "/apps/sentiment":
+        return sentiment.layout
     elif pathname == "/apps/models":
         return models.layout
     elif pathname == "/apps/strategies":

@@ -17,10 +17,20 @@ pie_chart_layout = {
                                 "showlegend":False,
                                 "margin":{"l":0,"r":0,"t":0,"b":0}, 
                                 }                                
+sentiment_chart_layout = {
+                                "paper_bgcolor" : "rgba(0,0,0,0)",
+                                "plot_bgcolor" : "rgba(0,0,0,0)",
+                                "autosize":True,
+                                "yaxis":{"title":"Sentiment score"},
+                                "margin":{"l":0,"r":0,"t":0,"b":0},
+
+}
+
 
 charts_layouts = {
     "Portfolio Value":portfolio_value_chart_layout,
-    "Pie Chart" : pie_chart_layout
+    "Pie Chart" : pie_chart_layout,
+    "Sentiment": sentiment_chart_layout
 }
 
 
@@ -51,7 +61,23 @@ class Chart():
     def draw_pie_chart(self, df, title=None):
         self.fig.add_trace(go.Pie(labels=df.index, values=df.values,textinfo='label',
     textposition='inside', title=title))
-        
+    
+    def draw_sentiment_chart(self,df,title=None):
+        self.fig.add_trace(go.Scatter(
+            x=df.index,
+            y=df.transformers_score_title,
+            marker=dict(
+                size=4,
+                cmax=10,
+                cmin=0,
+                color=df.num_news,
+                colorbar=dict(
+                    title="#News"
+                ),
+                colorscale="RdYlBu_r"
+            ),
+            mode="markers"
+        ))
 
     def get_chart(self):
         return self.fig

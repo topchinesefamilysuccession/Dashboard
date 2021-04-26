@@ -1,0 +1,69 @@
+.title {
+    margin-top: 30px;
+    font-size: 20px;
+}
+
+.sentiment-div {
+
+}
+
+.search-div {
+    width: 100%;
+    margin-left: 5%;
+}
+
+.search-box {
+    height: 40px;
+    width: 80%;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.suggestion-div {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    height: 40px;
+    width: 90%;
+}
+
+button.suggestion-btn {
+    background-color: rgb(179, 240, 255);
+    border:none;
+    border-radius: 5px;
+    margin-right: 5px;
+    cursor: pointer;
+    color: rgb(41, 41, 41);
+    transition: all 0.3s ease 0s;
+}
+
+button.suggestion-btn:hover {
+    background-color: linear-gradient(rgb(179, 240, 255), rgba(106, 225, 255, 0.8));
+}
+
+#sentiment-graph {
+    background-color:white;
+    padding: 10px;
+    margin: 10px;
+    width:70%;
+    text-align: center;
+    box-shadow:2px 2px 2px lightgrey;
+}
+
+#sentiment-news {
+    background-color:white;
+
+    padding: 10px 0;
+    margin: 10px;
+    width:28%;
+    text-align: center;
+    box-shadow:2px 2px 2px lightgrey;
+}
+
+.news-container {
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    width: 90%;
+    margin-left: 5%;
+}
