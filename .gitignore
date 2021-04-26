@@ -1,4 +1,5 @@
 venv
+env
 __pycache__
 .vscode
 apps/base/custom_libraries/config.py
