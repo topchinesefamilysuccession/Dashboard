@@ -43,27 +43,78 @@ button.suggestion-btn:hover {
 #sentiment-graph {
     background-color:white;
     padding: 10px;
-    margin: 10px;
+    margin: 10px 0;
     width:70%;
     text-align: center;
     box-shadow:2px 2px 2px lightgrey;
 }
 
-#sentiment-news {
-    background-color:white;
+#graph-controls {
+    display:flex;
+    flex-direction: row;
+    justify-content:space-around;
+    align-items: center;
+    width:100%;
+}
 
-    padding: 10px 0;
-    margin: 10px;
-    width:28%;
-    text-align: center;
-    box-shadow:2px 2px 2px lightgrey;
+#graph-controls > * {
+    width:25%;
 }
 
 .news-container {
     display:flex;
     flex-direction: row;
     justify-content: space-between;
-
+    height: 550px;
     width: 90%;
     margin-left: 5%;
+}
+
+#sentiment-news {
+    background-color:white;
+
+    padding: 10px;
+    margin: 10px;
+    width:28%;
+    text-align: center;
+    box-shadow:2px 2px 2px lightgrey;
+}
+
+#news-list {
+    overflow-y:scroll;
+    height: 90%;
+}
+
+#news-list::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	border-radius: 10px;
+	background-color: #F5F5F5;
+}
+
+#news-list::-webkit-scrollbar
+{
+	width: 7px;
+	background-color: #F5F5F5;
+}
+
+#news-list::-webkit-scrollbar-thumb
+{
+	border-radius: 10px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+	background-color: #555;
+}
+
+.news-card {
+    margin-bottom:5px;
+}
+
+.news-card-footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-content: center;
+
+    padding: 3px 30px;
+    height:2em;
 }

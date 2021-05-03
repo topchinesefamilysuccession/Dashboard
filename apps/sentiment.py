@@ -3,14 +3,20 @@ import dash_bootstrap_components as dbc
 import dash_html_components as html
 from dash.dependencies import Input, Output, ALL
 from dash.exceptions import PreventUpdate
+import lorem
 
 import dash
 
 from app import app
 
+
+
 from .base.sentiment_utils import Sentiment
 from .base.general_utils import ipsum_lorem, build_parameters_markdown, build_strategy_summary
 from .base.charts_utils import Chart, init_chart
+
+import json
+import datetime
 
 sentiment = Sentiment()
 
@@ -36,7 +42,7 @@ layout = html.Div([
                 # children=[html.Button(text, value=text, n_clicks=0, id={'type':'sug-btn','index':i} ,className='suggestion-btn') for i,text in enumerate(sentiment.matched_tickers)],
                 dcc.Dropdown(
                     id='ticker-selection',
-                    options=[{'label':value, 'value':value} for value in sentiment.tickers],
+                    options=[{'label':value + '     ' + ' | ' + sentiment.labels_dict[value], 'value':value} for value in sentiment.tickers],
                     value='TSLA'
                 ),
                 className='suggestion-div',
@@ -49,6 +55,27 @@ layout = html.Div([
         [
             html.Div(
                 [
+                    html.Div(
+                        [
+                            dcc.Dropdown(
+                                options=[
+                                    {'label':'Bar Chart', 'value':'bar'},
+                                    {'label':'Stacked Area Chart', 'value':'area'},
+                                    
+                                ],
+                                value='bar',
+                                id='chart-type'
+                            ),
+                            dcc.Checklist(
+                                options=[
+                                    {'label':'Mean trend','value':'mean'}
+                                ],
+                                value=[],
+                                id='mean-trend'
+                            ),
+                        ],
+                        id='graph-controls'
+                    ),
                     dcc.Loading(dcc.Graph(id="sentiment-chart"), type=SPINNER)
                 ],
                 id='sentiment-graph'
@@ -57,9 +84,20 @@ layout = html.Div([
                 [
                     html.H4('News feed'),
                     html.Div(
-                        [
-                            html.H5('List of news')
-                        ],
+                        children = [dbc.Card(
+                                [
+                                    dbc.CardBody([
+                                        html.H4(lorem.sentence()[:30] + '...', className='card-title'),
+                                        html.P(lorem.text()[:150] + '...', className='card-text')
+                                    ]),
+                                    dbc.CardFooter([
+                                        html.P('Positive: 4'),
+                                        html.P('source: yahoo.com')
+                                    ], className='news-card-footer')
+                                ],
+                                className='news-card'
+                            ) for x in range(10)]
+                        ,
                         id='news-list'
                     )
                 ],
@@ -72,11 +110,14 @@ layout = html.Div([
 ], className='sentiment-div')
 
 @app.callback(
-    [Output('sentiment-chart',"figure"),Output('news-list',"children")],
-    [Input('ticker-selection','value')]
+    [
+        Output('sentiment-chart',"figure"), #,
+        # Output('news-list',"children")
+    ],
+    [Input('ticker-selection','value'),Input('sentiment-chart','relayoutData'),Input('mean-trend','value')]
     )
 
-def render_eSearch(ticker):
+def render_eSearch(ticker, relayoutData, mean_trend):
     if ticker == None:
         raise PreventUpdate
         # return [html.Div([html.Button(text, value=text,n_clicks=0, id={'type':'sug-btn','index':i}, className='suggestion-btn') for i,text in enumerate(sentiment.default_matches)])]
@@ -87,13 +128,28 @@ def render_eSearch(ticker):
     # new_suggestion = [html.Div([html.Button(text, value=text,n_clicks=0, id={'type':'sug-btn','index':i},className='suggestion-btn') for i,text in enumerate(new_suggestion)])]
 
     # return new_suggestion
+    if len(mean_trend) != 0:
+        mean_trend = True
+    else:
+        mean_trend = False
 
     df = sentiment.get_sentiment_data(ticker)
     sentiment_chart = Chart('Sentiment')
-    sentiment_chart.draw_sentiment_chart(df)
+
+    if 'xaxis.range[0]' in relayoutData:
+        print(relayoutData)
+        sentiment_chart.draw_sentiment_chart(df, 
+                                            dates=[relayoutData['xaxis.range[0]'].split(' ')[0],relayoutData['xaxis.range[1]'].split(' ')[0]],
+                                            mean_trend=mean_trend)
+        #sentiment.get_news_list(ticker,df.loc[relayoutData['xaxis.range[0]']:relayoutData['xaxis.range[1]']].index) 
+        #print(sentiment.news_list)
+    else:
+        sentiment_chart.draw_sentiment_chart(df, mean_trend=mean_trend)
+        #sentiment.get_news_list(ticker,df.index)
+    
     sentiment_fig = sentiment_chart.get_chart()
 
-    return sentiment_fig, 'List of news for: ' + ticker
+    return [sentiment_fig] #, 'List of news for: ' + ticker
 
 # @app.callback(
 #     [Output('sentiment-graph',"children"),Output('sentiment-news',"children")],

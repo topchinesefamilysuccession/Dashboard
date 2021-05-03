@@ -2,16 +2,22 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
+# import base64
 
 from app import app 
 from apps import backtesting, allocations, models, strategies, sentiment
+
+
+# image_filename = 'img/logo2_circle.png' # replace with your own image
+# encoded_image = base64.b64encode(open(image_filename, 'rb').read())
 
 
 app.layout = html.Div([
     dcc.Location(id="url", refresh=False),
     
     html.Header([
-        # html.Img(src=app.get_asset_url('/img/logo.svg')),
+        # html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()), 
+        #         style={'width':'70px','border-radius':'35px'}),
         html.H2("Top Chinese Strategies", className="logo"),
         html.Nav([
         html.Ul([
