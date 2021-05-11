@@ -6,7 +6,7 @@ import pandas as pd
 import datetime
 import dns
 import os
-from .config import get_credential
+import sys
 
 class myMongo():
     def __init__(self, db_name):
