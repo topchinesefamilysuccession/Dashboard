@@ -23,12 +23,11 @@ app.layout = html.Div([
         html.Button("Build a Strategy", id="build-strat-btn"),
         
     ]),
-    dcc.Checklist(id="language", options=[{"label":"Mandarin", "value":"cn"}],inputStyle={"margin-right": "9px"}
+    dcc.Checklist(id="language", options=[{"label":"Mandarin/中文", "value":"cn"}],inputStyle={"margin-right": "9px"}
 ),
     html.Div(id="page-content")
 ])
 
-server = app.server
 
 @app.callback(
     [Output("url", "pathname")],

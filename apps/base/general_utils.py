@@ -1,4 +1,7 @@
 import dash_html_components as html
+from dash_table import FormatTemplate
+
+
 ipsum_lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
 
 
@@ -37,31 +40,21 @@ def build_parameters_markdown(parameters, language="en"):
     return markdown
 
 
-def build_strategy_summary(stats, language="en"):
+def build_strategy_summary(stats):
     pnl = stats["pnl"].values[0]
     max_dd = stats["max_dd"].values[0]
     final_portfolio_value =  stats["portfolio_value"].values[0]
     
-    if language == "en":
-        pnl_label = "PnL" 
-        dd_label = "Max Drawdown"
-        final_prt_label = "Final Portfolio Value"
-    elif language == "cn":
-        pnl_label = "盈亏"
-        dd_label = "最大下探"
-        final_prt_label = "最终日资产价值"
-
-
     summary =  [html.P(children=[
-                    html.Strong(f"{pnl_label}: "),
+                    html.Strong("PnL: "),
                     f"{pnl:,.2f} $"
                                 ]),
                 html.P(children=[
-                    html.Strong(f"{dd_label}: "),
+                    html.Strong("Max Drawdown: "),
                     f"{max_dd:,.2f} $"
                                 ]),
                 html.P(children=[
-                    html.Strong(f"{final_prt_label}: "),
+                    html.Strong("Final Portfolio Value: "),
                     f"{final_portfolio_value:,.2f} $"
                                 ]),
     
@@ -69,3 +62,17 @@ def build_strategy_summary(stats, language="en"):
 
 
     return summary
+
+
+def build_trades_columns(strategies):
+    money = FormatTemplate.money(2)
+    styled_columns = []
+
+    for i in strategies.get_trades(filter=["S1"]).columns:
+        name = i[0].upper() + i[1:]    
+        if i in ["price", "value"]:
+            styled_column = {"name": name, "id": i, "type":"numeric", "format":money} 
+        else:
+            styled_column = {"name": name, "id": i} 
+        styled_columns.append(styled_column)
+    return styled_columns
