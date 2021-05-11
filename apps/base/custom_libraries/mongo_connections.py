@@ -10,9 +10,9 @@ import sys
 
 class myMongo():
     def __init__(self, db_name):
-        self.user = get_credential("USERNAME")
-        self.pwd = get_credential("PASSWORD")
-        self.cluster_name = get_credential("CLUSTER")
+        self.user = os.getenv("USERNAME")
+        self.pwd = os.getenv("PASSWORD")
+        self.cluster_name = os.getenv("CLUSTER")
         self.db_name = db_name
         self.cnn_str = f"mongodb+srv://{self.user}:{self.pwd}@{self.cluster_name}/{self.db_name}?retryWrites=true&w=majority"
         self.cluster = MongoClient(self.cnn_str, retryWrites=False)
