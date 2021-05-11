@@ -7,6 +7,7 @@ from app import app
 from apps import backtesting, allocations, models, strategies
 
 
+
 app.layout = html.Div([
     dcc.Location(id="url", refresh=False),
     
@@ -57,6 +58,8 @@ def display_page(pathname):
         return strategies.layout
     else:
         return backtesting.layout
+
+server = app.server
 
 if __name__ == "__main__":
     app.run_server(debug=True)
