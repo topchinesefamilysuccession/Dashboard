@@ -59,6 +59,8 @@ class Strategies():
             elif language == "cn":
                 keys.extend(["rebalancing_frequency-cn", "markets", "asset_classes-cn", "period"])
 
+        # print(keys)
+        df = self.strategies_description[keys]
         
         df = self.strategies_description[keys]
         if filter:
@@ -75,6 +77,7 @@ class Strategies():
 
     def get_strategies_portfolio_value(self, filter):
         df = self.strategies_portfolio_value
+        df.sort_values(by=['date'],inplace=True)
         if filter:
             df = self._filter_df_by_id(df, filter)
             df.sort_values("date", inplace=True)

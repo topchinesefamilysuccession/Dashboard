@@ -2,9 +2,14 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
+# import base64
 
 from app import app 
-from apps import backtesting, allocations, models, strategies
+from apps import backtesting, allocations, models, strategies, sentiment
+
+
+# image_filename = 'img/logo2_circle.png' # replace with your own image
+# encoded_image = base64.b64encode(open(image_filename, 'rb').read())
 
 
 
@@ -12,11 +17,13 @@ app.layout = html.Div([
     dcc.Location(id="url", refresh=False),
     
     html.Header([
+        # html.Img(src='data:image/png;base64,{}'.format(encoded_image.decode()), 
+        #         style={'width':'70px','border-radius':'35px'}),
         html.H2("Top Chinese Strategies", className="logo"),
         html.Nav([
         html.Ul([
             html.Li([dcc.Link('Backtesting', href='/apps/backtesting')]),
-            html.Li([dcc.Link('Allocations', href='/apps/allocations')]),
+            html.Li([dcc.Link('Sentiment', href='/apps/sentiment')]),
             html.Li([dcc.Link('Models', href='/apps/models')]),
         ],className="nav_links")
     ]),
@@ -52,6 +59,8 @@ def display_page(pathname):
         return backtesting.layout
     elif pathname == "/apps/allocations":
         return allocations.layout
+    elif pathname == "/apps/sentiment":
+        return sentiment.layout
     elif pathname == "/apps/models":
         return models.layout
     elif pathname == "/apps/strategies":
