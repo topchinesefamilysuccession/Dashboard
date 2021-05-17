@@ -49,7 +49,7 @@ def translate_labels(language):
     if language == "cn":
         backtesting_label = "回溯测试"
         sentiment_label = "舆情"
-        market_label =  "."
+        market_label =  "市场调查"
     elif language == "en":
         backtesting_label = "Backtesting"
         sentiment_label = "Sentiment"
@@ -84,8 +84,8 @@ def display_page(pathname):
         return allocations.layout
     elif pathname == "/apps/sentiment":
         return sentiment.layout
-    elif pathname == "/apps/models":
-        return models.layout
+    elif pathname == "/apps/market":
+        return market.layout
     elif pathname == "/apps/strategies":
         return strategies.layout
     else:
