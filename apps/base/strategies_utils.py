@@ -28,10 +28,18 @@ class Strategies():
         self.strategies_returns = db.find("strategies_returns", "all", None)
         self.strategies_trades = db.find("strategies_trades", "all", None)
 
+
+        print(self.strategies_description.info())
+        print(self.strategies_general_stats.info())
+        print(self.strategies_portfolio_value.info())
+        print(self.strategies_returns.info())
+        print(self.strategies_trades.info())
+
         self.strategies_description["id"] = self.strategies_description["strategy_id"].apply(lambda x : float(x.split("S")[-1]))
         self.strategies_description.sort_values("id",inplace=True)
         self.strategies_trades.sort_values("date", inplace=True)
     
+        
         db.close_connection()
 
         db = myMongo("etf")
