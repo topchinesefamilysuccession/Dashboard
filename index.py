@@ -5,7 +5,7 @@ from dash.exceptions import PreventUpdate
 # import base64
 
 from app import app 
-from apps import backtesting, allocations, models, strategies, sentiment
+from apps import backtesting, allocations, market, strategies, sentiment
 
 
 # image_filename = 'img/logo2_circle.png' # replace with your own image
@@ -22,9 +22,9 @@ app.layout = html.Div([
         html.H2("Top Chinese Strategies", className="logo"),
         html.Nav([
         html.Ul([
-            html.Li([dcc.Link('Backtesting', href='/apps/backtesting')]),
-            html.Li([dcc.Link('Sentiment', href='/apps/sentiment')]),
-            html.Li([dcc.Link('Models', href='/apps/models')]),
+            html.Li([dcc.Link('Backtesting', href='/apps/backtesting', id="backtesting-header")]),
+            html.Li([dcc.Link('Sentiment', href='/apps/sentiment', id="sentiment-header")]),
+            html.Li([dcc.Link('Market Research', href='/apps/market', id="marketresearch-header")]),
         ],className="nav_links")
     ]),
     
@@ -35,6 +35,29 @@ app.layout = html.Div([
 ),
     html.Div(id="page-content")
 ])
+
+@app.callback(
+    [Output("backtesting-header", "children"), Output("sentiment-header", "children"), Output("marketresearch-header", "children")],
+    [Input("language", "value")]
+)
+def translate_labels(language):
+    if language == ["cn"]:
+        language = "cn"
+    else:
+        language = "en"
+        
+    if language == "cn":
+        backtesting_label = "回溯测试"
+        sentiment_label = "舆情"
+        market_label =  "."
+    elif language == "en":
+        backtesting_label = "Backtesting"
+        sentiment_label = "Sentiment"
+        market_label =  "Market Research"
+    
+    return backtesting_label, sentiment_label, market_label
+
+
 
 
 @app.callback(

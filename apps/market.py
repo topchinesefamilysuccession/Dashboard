@@ -6,6 +6,7 @@ from app import app
 
 layout = html.Div([
 
-    html.H3("Models Page !!!"), 
+
+    html.H3("Market Page !!!"), 
     
 ])
