@@ -1,0 +1,12 @@
+.markert-search{
+    width: 70%;
+    overflow: scroll;
+    margin:auto
+
+}
+
+#search-keyword{
+    width: 30%;
+    height:60%;
+    margin-bottom: 2%;
+}

@@ -78,6 +78,9 @@ class Chart():
     
     def draw_portfolio_value(self, df, name):
         self.fig.add_trace(go.Scatter(mode="lines",x=df["date"], y=df["prt_value"], name=name))
+        
+    def draw_df(self, df, name, x_name, y_name):
+        self.fig.add_trace(go.Scatter(mode="lines",x=df[x_name], y=df[y_name], name=name))
 
     def draw_pie_chart(self, df, title=None):
         self.fig.add_trace(go.Pie(labels=df.index, values=df.values,textinfo='label',
