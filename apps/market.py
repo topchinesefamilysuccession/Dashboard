@@ -56,6 +56,8 @@ def fill_table(v):
     
     fred_handler = FredHandler()
     rslt = fred_handler.search_report(v)
+    print("FRED RESULT")
+    print(rslt)
     if len(rslt) == 0:
         return [[{}]]
     rslt = rslt[table_columns]
