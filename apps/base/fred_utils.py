@@ -9,7 +9,7 @@ if os.getenv("USERNAME") == "jorgelameira":
 else:
     api_key = os.getenv("FRED_KEY")
 
-
+print(api_key)
 
 class FredHandler():
     def __init__(self):
