@@ -36,6 +36,4 @@ stringcase==1.2.0
 tzlocal==2.1
 urllib3==1.26.4
 Werkzeug==1.0.1
-
--i https://test.pypi.org/simple/
-fred-api-wrapper
+fred-api-wrapper==0.0.1
