@@ -7,9 +7,8 @@ if os.getenv("USERNAME") == "jorgelameira":
     from .custom_libraries.config import get_credential
     api_key = get_credential("FRED_KEY")
 else:
-    api_key = os.getenv("FRED_KEY")
+    api_key = "2d226d1ec2984e70a665086166231b68"
 
-print(api_key)
 
 class FredHandler():
     def __init__(self):
