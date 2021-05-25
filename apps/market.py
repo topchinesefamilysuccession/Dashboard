@@ -10,15 +10,24 @@ import pandas as pd
 
 from app import app
 
-table_columns = ["id", "title"]
+table_columns = ["id", "title", "observation_end",  "frequency_short", "notes"]
 
 
 layout = html.Div([
 
     html.Div([
         html.H3("Market Research"), 
-        dcc.Input(id="search-keyword", value=""), 
+        dcc.Input(id="search-keyword", value="inflation"), 
         dcc.Graph(id="series-graph"),
+        html.P(id="description-title", children=["Description"] ),
+        html.P(id="report-info"),
+        dcc.Checklist(id="table-filters", 
+                        options=[
+                            {"label":" Sort by Popularity ", "value":"popularity"}, 
+                            ], 
+                        
+                        labelStyle={'display': 'inline-block',"margin-right": "15px", "margin-top": "20px"},
+                        ),
         dash_table.DataTable(
                     id="report-table", 
                     columns = [{"id":v, "name":v} for v in table_columns],
@@ -29,13 +38,15 @@ layout = html.Div([
                     style_table={'width': '100%'},
                     style_header={'textAlign': 'center'},
                     row_selectable = "single",
-                    # selected_rows=[0],
                     style_cell_conditional=[
                                             {
                                                 'if': {'column_id': c},
                                                 'textAlign': 'center'
-                                            } for c in ['id', 'title']
+                                            } for c in ['id', 'title',"frequency_short" ]
+                                            
                                         ],
+                    hidden_columns = ["notes"],
+                    css=[{"selector": ".show-hide", "rule": "display: none"}]
 
                 ),
     ], className="markert-search"),
@@ -47,21 +58,49 @@ layout = html.Div([
 
 @app.callback(
     [Output("report-table", "data")], 
-    [Input("search-keyword", "value")]
+    [Input("search-keyword", "value"), Input("table-filters", "value")]
 )
 
-def fill_table(v):
+def fill_table(v, table_filters):
     if v == None:
         raise PreventUpdate
+
     
     fred_handler = FredHandler()
     rslt = fred_handler.search_report(v)
-    print("FRED RESULT")
-    print(rslt)
+
+
     if len(rslt) == 0:
         return [[{}]]
+
+    if table_filters != None and len(table_filters) > 0:
+        if "popularity" in table_filters:
+            rslt = rslt.sort_values(by="popularity", ascending=False)
+
     rslt = rslt[table_columns]
     return [rslt.to_dict("records")]
+
+
+
+@app.callback(
+    [Output("report-info", "children")],
+    [Input("report-table", "selected_rows")],
+    [State("report-table", "data")]
+
+)
+def build_description(v, data):
+    if v == None:
+        raise PreventUpdate
+
+
+    df = pd.DataFrame(columns = table_columns, data=data)
+    index_selected = v[0]
+
+    df = df.iloc[index_selected]
+    report_notes = df["notes"]
+
+    return [report_notes]
+
 
 @app.callback(
     [Output("series-graph", "figure")],
@@ -70,9 +109,8 @@ def fill_table(v):
 )
 
 def fill_table(v, data):
-    if v == None or len(data) == 0:
+    if v == None or data ==None or len(data) == 0:
         raise PreventUpdate
-    print(data)
 
     df = pd.DataFrame(columns = table_columns, data=data)
     index_selected = v[0]

@@ -1,8 +1,18 @@
 .markert-search{
     width: 70%;
-    overflow: scroll;
+    /* overflow: scroll; */
     margin:auto
 
+}
+
+
+#report-info{
+    height: 70px;
+    overflow-y: scroll;
+}
+
+#report-table{
+    overflow-x: scroll;
 }
 
 #search-keyword{

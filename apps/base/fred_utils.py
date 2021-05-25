@@ -19,7 +19,7 @@ class FredHandler():
         rslt = self.fred.search_for_series(keyword)
         if len(rslt)  == 0:
             return rslt
-        rslt = rslt[["id", "title", "observation_end", "observation_end", "frequency_short", "units", "seasonal_adjustment_short"]]
+        # rslt = rslt[["id", "title", "observation_end", "observation_end", "frequency_short", "units", "seasonal_adjustment_short"]]
         return rslt
 
     def get_series(self, report_id):
