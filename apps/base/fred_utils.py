@@ -3,14 +3,12 @@ import os
 import pandas as pd
 
 
-def env_vars(request):
-    return os.environ.get("FRED_KEY")
 
 if os.getenv("USERNAME") == "jorgelameira":
     from .custom_libraries.config import get_credential
     api_key = get_credential("FRED_KEY")
 else:
-    api_key = env_vars
+    api_key = "2d226d1ec2984e70a665086166231b68"
 
 
 class FredHandler():
