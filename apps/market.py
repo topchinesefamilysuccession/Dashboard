@@ -10,6 +10,7 @@ import pandas as pd
 
 from app import app
 
+SPINNER = "cube"
 table_columns = ["id", "title", "observation_end",  "frequency_short", "notes"]
 
 
@@ -17,8 +18,8 @@ layout = html.Div([
 
     html.Div([
         html.H3("Market Research"), 
-        dcc.Input(id="search-keyword", value="inflation"), 
-        dcc.Graph(id="series-graph"),
+        dcc.Input(id="search-keyword", value="Inflation"), 
+        dcc.Loading(dcc.Graph(id="series-graph"), type=SPINNER),
         html.P(id="description-title", children=["Description"] ),
         html.P(id="report-info"),
         dcc.Checklist(id="table-filters", 
@@ -57,7 +58,7 @@ layout = html.Div([
 
 
 @app.callback(
-    [Output("report-table", "data")], 
+    [Output("report-table", "data"), Output("report-table", "selected_rows")], 
     [Input("search-keyword", "value"), Input("table-filters", "value")]
 )
 
@@ -71,14 +72,15 @@ def fill_table(v, table_filters):
 
 
     if len(rslt) == 0:
-        return [[{}]]
+        return [{}], []
 
     if table_filters != None and len(table_filters) > 0:
         if "popularity" in table_filters:
             rslt = rslt.sort_values(by="popularity", ascending=False)
 
     rslt = rslt[table_columns]
-    return [rslt.to_dict("records")]
+
+    return rslt.to_dict("records"), [0]
 
 
 
@@ -119,7 +121,7 @@ def fill_table(v, data):
     report_id = df["id"]
     fred_handler = FredHandler()
     df = fred_handler.get_series(report_id)
-    prt_value_fig = Chart("Portfolio Value")
+    prt_value_fig = Chart("General")
     prt_value_fig.draw_df(df, report_id, "date", "value")
     prt_value_fig = prt_value_fig.get_chart()
     return [prt_value_fig]

@@ -46,12 +46,21 @@ sentiment_chart_layout = {
 
 }
 
+general_chart_layout = {
+                                "paper_bgcolor" : "rgba(0,0,0,0)",
+                                "plot_bgcolor" : "rgba(0,0,0,0)",
+                                "xaxis":{"title":"Dates"}, 
+                                "yaxis":{"title":"Values"},
+                                "autosize":True
+                                }
+
 
 charts_layouts = {
     "Portfolio Value":portfolio_value_chart_layout,
     "Pie Chart" : pie_chart_layout,
     "Bar Chart" : bar_chart_layout,
-    "Sentiment": sentiment_chart_layout
+    "Sentiment": sentiment_chart_layout,
+    "General":general_chart_layout
 }
 
 
