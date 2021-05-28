@@ -5,7 +5,7 @@ from dash.exceptions import PreventUpdate
 # import base64
 
 from app import app 
-from apps import backtesting, allocations, market, strategies, sentiment
+from apps import backtesting, allocations, market, strategies, sentiment, macro
 
 
 # image_filename = 'img/logo2_circle.png' # replace with your own image
@@ -25,6 +25,7 @@ app.layout = html.Div([
             html.Li([dcc.Link('Backtesting', href='/apps/backtesting', id="backtesting-header")]),
             html.Li([dcc.Link('Sentiment', href='/apps/sentiment', id="sentiment-header")]),
             html.Li([dcc.Link('Market Research', href='/apps/market', id="marketresearch-header")]),
+            html.Li([dcc.Link('Macro Data', href='/apps/macro', id="macro-header")])
         ],className="nav_links")
     ]),
     
@@ -37,7 +38,7 @@ app.layout = html.Div([
 ])
 
 @app.callback(
-    [Output("backtesting-header", "children"), Output("sentiment-header", "children"), Output("marketresearch-header", "children")],
+    [Output("backtesting-header", "children"), Output("sentiment-header", "children"), Output("marketresearch-header", "children"),Output("macro-header", "children")],
     [Input("language", "value")]
 )
 def translate_labels(language):
@@ -50,12 +51,14 @@ def translate_labels(language):
         backtesting_label = "回溯测试"
         sentiment_label = "舆情"
         market_label =  "市场调查"
+        macro_label =  "宏数据"
     elif language == "en":
         backtesting_label = "Backtesting"
         sentiment_label = "Sentiment"
         market_label =  "Market Research"
+        macro_label =  "Macro Data"
     
-    return backtesting_label, sentiment_label, market_label
+    return backtesting_label, sentiment_label, market_label,macro_label
 
 
 
@@ -86,6 +89,8 @@ def display_page(pathname):
         return sentiment.layout
     elif pathname == "/apps/market":
         return market.layout
+    elif pathname == "/apps/macro":
+        return macro.layout
     elif pathname == "/apps/strategies":
         return strategies.layout
     else:

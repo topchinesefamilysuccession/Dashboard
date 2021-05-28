@@ -72,7 +72,7 @@ def fill_table(v, table_filters):
 
 
     if len(rslt) == 0:
-        return [{}], []
+        return [{}], [0]
 
     if table_filters != None and len(table_filters) > 0:
         if "popularity" in table_filters:
@@ -111,7 +111,7 @@ def build_description(v, data):
 )
 
 def fill_table(v, data):
-    if v == None or data ==None or len(data) == 0:
+    if v == None or data ==None or len(data[0]) == 0:
         raise PreventUpdate
 
     df = pd.DataFrame(columns = table_columns, data=data)
