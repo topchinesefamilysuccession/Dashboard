@@ -18,7 +18,8 @@ layout = html.Div([
 
     html.Div([
         html.H3("Market Research"), 
-        dcc.Input(id="search-keyword", value="Inflation"), 
+        dcc.Input(id="search-keyword", value="Inflation"),
+        html.P(id="no-result-output"), 
         dcc.Loading(dcc.Graph(id="series-graph"), type=SPINNER),
         html.P(id="description-title", children=["Description"] ),
         html.P(id="report-info"),
@@ -58,7 +59,7 @@ layout = html.Div([
 
 
 @app.callback(
-    [Output("report-table", "data"), Output("report-table", "selected_rows")], 
+    [Output("report-table", "data"), Output("report-table", "selected_rows"), Output("no-result-output", "children")], 
     [Input("search-keyword", "value"), Input("table-filters", "value")]
 )
 
@@ -72,7 +73,7 @@ def fill_table(v, table_filters):
 
 
     if len(rslt) == 0:
-        return [{}], [0]
+        return [{}], [0], ["No results found for the above search keywords."]
 
     if table_filters != None and len(table_filters) > 0:
         if "popularity" in table_filters:
@@ -80,7 +81,7 @@ def fill_table(v, table_filters):
 
     rslt = rslt[table_columns]
 
-    return rslt.to_dict("records"), [0]
+    return rslt.to_dict("records"), [0], []
 
 
 
@@ -111,8 +112,14 @@ def build_description(v, data):
 )
 
 def fill_table(v, data):
-    if v == None or data ==None or len(data[0]) == 0:
+    if v == None or data ==None or len(data) == 0:
         raise PreventUpdate
+
+    if len(data[0]) == 0:
+        prt_value_fig = Chart("General")
+        prt_value_fig.draw_no_data()
+        prt_value_fig = prt_value_fig.get_chart()
+        return [prt_value_fig]
 
     df = pd.DataFrame(columns = table_columns, data=data)
     index_selected = v[0]

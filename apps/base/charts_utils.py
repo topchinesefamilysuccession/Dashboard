@@ -90,6 +90,8 @@ class Chart():
         
     def draw_df(self, df, name, x_name, y_name):
         self.fig.add_trace(go.Scatter(mode="lines",x=df[x_name], y=df[y_name], name=name))
+    def draw_no_data(self):
+         self.fig.add_trace(go.Scatter(mode="lines",x=[1, 2, 3, 4, 5, 6 ], y=[1, 1, 1, 1, 1, 1]))
 
     def draw_pie_chart(self, df, title=None):
         self.fig.add_trace(go.Pie(labels=df.index, values=df.values,textinfo='label',
