@@ -45,17 +45,17 @@ def build_strategy_summary(stats):
     max_dd = stats["max_dd"].values[0]
     final_portfolio_value =  stats["portfolio_value"].values[0]
     
-    summary =  [html.P(children=[
-                    html.Strong("PnL: "),
-                    f"{pnl:,.2f} $"
+    summary =  [html.Div(children=[
+                                    html.Strong("PnL: "),
+                                    html.Span(f"${pnl:,.2f}")
+                                    ]),
+                html.Div(children=[
+                                    html.Strong("Max Drawdown: "),
+                                    html.Span(f"${max_dd:,.2f}")
                                 ]),
-                html.P(children=[
-                    html.Strong("Max Drawdown: "),
-                    f"{max_dd:,.2f} $"
-                                ]),
-                html.P(children=[
+                html.Div(children=[
                     html.Strong("Final Portfolio Value: "),
-                    f"{final_portfolio_value:,.2f} $"
+                    html.Span(f"${final_portfolio_value:,.2f}")
                                 ]),
     
     ]
