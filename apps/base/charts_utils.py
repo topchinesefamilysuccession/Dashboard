@@ -1,4 +1,6 @@
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+
 import pandas as pd
 import time
 import datetime
@@ -21,8 +23,8 @@ pie_chart_layout = {
                                 "plot_bgcolor" : "rgba(0,0,0,0)",
                                 "autosize":True,
                                 "showlegend":False,
-                                "margin":{"l":0,"r":0,"t":0,"b":0}, 
-                                
+                                "margin":{"l":0,"r":0,"t":0,"b":0},
+                                "height":250
                                 }         
 
 bar_chart_layout = {
@@ -36,13 +38,14 @@ bar_chart_layout = {
 sentiment_chart_layout = {
                                 "paper_bgcolor" : "rgba(0,0,0,0)",
                                 "plot_bgcolor" : "rgba(0,0,0,0)",
-                                "autosize":True,
+                                #"autosize":True,
                                 "yaxis":{"title":"Negative VS Positive"},
                                 "margin":{"l":0,"r":0,"t":0,"b":0},
                                 "xaxis_tickangle":-45,
                                 "xaxis_nticks":40,
                                 "barmode":"stack",
-                                "bargroupgap":0
+                                "bargroupgap":0,
+                                #"height":400,
 
 }
 
@@ -79,9 +82,12 @@ def init_chart():
 
 
 class Chart():
-    def __init__(self, chart_name):
+    def __init__(self, chart_name, multiple_axes=False):
         self.chart_name=chart_name
-        self.fig = go.Figure()
+        if multiple_axes:
+            self.fig = make_subplots(specs=[[{"secondary_y":True}]])
+        else:
+            self.fig = go.Figure()
         chart_layout = charts_layouts.get(self.chart_name, {})
         self.fig.update_layout(chart_layout)
     
@@ -106,7 +112,8 @@ class Chart():
     def draw_sentiment_chart(self,df,title=None,
                             chart_type='bar',
                             dates=None,
-                            mean_trend=False):
+                            mean_trend=False,
+                            price_graph=[]):
         nbins = 60
         
         if dates != None:
@@ -140,17 +147,6 @@ class Chart():
                 # Add bars
                 self.fig.add_trace(go.Bar(
                                     x=new_df.index,
-                                    y=new_df.neg_perc,
-                                    name='Negative',
-                                    marker_color='#e53935',
-                                    #offset=0,
-                                    width=bin_size.total_seconds() * 1000 *0.8, #*1000*3600*24,
-                                    # edgecolor='black'
-                                    # xperiod="D" + str(nbins),
-                                    marker_line_color='black' #, marker_line_width=5
-                                    ))
-                self.fig.add_trace(go.Bar(
-                                    x=new_df.index,
                                     y=new_df.pos_perc,
                                     name='Positive',
                                     marker_color='#00b276',
@@ -160,21 +156,43 @@ class Chart():
                                     # edgecolor='black'
                                     # xperiod="D" + str(nbins),
                                     marker_line_color='black' #, marker_line_width=5
-                                    ))
+                                    ),
+                                    secondary_y=False)
+                self.fig.add_trace(go.Bar(
+                                    x=new_df.index,
+                                    y=new_df.neg_perc,
+                                    name='Negative',
+                                    marker_color='#e53935',
+                                    #offset=0,
+                                    width=bin_size.total_seconds() * 1000 *0.8, #*1000*3600*24,
+                                    # edgecolor='black'
+                                    # xperiod="D" + str(nbins),
+                                    marker_line_color='black' #, marker_line_width=5
+                                    ),
+                                    secondary_y=False)
 
                 if mean_trend:
                     self.fig.add_trace(go.Scatter(x=[new_df.index.min(),df.index.max()], 
-                                                    y=[new_df.neg_perc.mean(),new_df.neg_perc.mean()],
+                                                    y=[new_df.pos_perc.mean(),new_df.pos_perc.mean()],
                                                     mode='lines',
                                                     marker_color='black',
-                                                    name='Mean trend'))
+                                                    name='Mean trend'),
+                                        secondary_y=False)
+
+                if len(price_graph) != 0:
+                    self.fig.add_trace(go.Scatter(x=price_graph.index, 
+                                                    y=price_graph.close,
+                                                    mode='lines',
+                                                    marker_color='darkblue',
+                                                    name='Close Price'),
+                                        secondary_y=True)
 
         self.fig.update_layout(legend=dict(
-                    yanchor="top",
-                    y=0.6,
-                    xanchor="right",
-                    x=1.12
-                ))
+                                    yanchor="top",
+                                    y=0.6,
+                                    xanchor="right",
+                                    x=1.12),
+                                xaxis_range=[df.index.min(),df.index.max()+bin_size])
 
     def get_chart(self):
         return self.fig

@@ -1,12 +1,9 @@
-body{
-    height : 175vh;
-}
-
 
 .upper-content{
     display: flex;
     flex-direction: row;
-    height: 85vh ;
+    height: 100vh;
+    min-height: 400px;
 }
 
 .left-side{
@@ -66,6 +63,7 @@ body{
 .charts-content{
     display: flex;
     flex-direction: row;
+    height: calc(100% - 47px)
 }
 
 .left-chart-div{
@@ -77,7 +75,15 @@ body{
     flex-grow: 1;
     display:flex;
     flex-direction: column;
+    height: 100%;
+}
 
+.left-chart-div > div {
+    height: 100%;
+}
+
+#main-chart {
+    height: 100%;
 }
 
 .bottom-content{
@@ -174,20 +180,28 @@ body{
 }
 
 #strategies-summary{
+    flex: 0 1 auto;
     text-align: left;
     margin:10% 6% 0% 5%;
 }
 
-#strategies-summary p {
-    text-align: right;
-    white-space: nowrap;
+#strategies-summary > div {
+    display: flex;
+    justify-content: space-between;
 }
 
+.right-chart-div > div:last-child {
+    flex: 1 1 auto;
+    display: flex;
+    justify-content:center;
+    align-items: center;
+}
 
 #assets-pie{
-    flex-grow: 1;
-    max-width: 60%;
-    margin-left: 20%;
+    padding: 0 20px;
+    margin: 0 auto;
+    max-width: 250px;
+    min-width: 250px;
 }
 
 #trades-report-header{

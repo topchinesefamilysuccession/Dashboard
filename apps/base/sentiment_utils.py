@@ -2,15 +2,22 @@ from .custom_libraries.mongo_connections import myMongo
 import datetime
 import pandas as pd
 from O365 import Account, FileSystemTokenBackend
+from tiingo import TiingoClient
+
+TIINGO_TOKEN = "c50cfdc0a109426822e1a16bfa3b473e6a9240ab"
+config = {
+    'session':True,
+    'api_key':TIINGO_TOKEN
+}
+
 
 class Sentiment():
     def __init__(self):
         self.tickers = None
-        self.labels_dict = None
+        self.labels_dict = {}
         self.oneDrive = None
         self.news_list = None
-        self.matched_tickers = ["AAPL", "QQQ.US_5", "GOOG", "MSFT"]
-        self.default_matches = ["AAPL", "QQQ.US_5", "GOOG", "MSFT"]
+        self.tiingoClient = TiingoClient(config)
 
         self.SignInOneDrive()
         self.get_data()
@@ -27,40 +34,58 @@ class Sentiment():
     def get_ticker_labels(self):
         mongo = myMongo('etf')
         etfs = mongo.db['etf']
-        etfs = pd.DataFrame(list(etfs.find({'etf_name':'etf_description'},{'symbol':1,'description':1,'_id':0})))
+        etfs = pd.DataFrame(list(etfs.find({'etf_name':'etf_description'},{'symbol':1,'description':1,'categoryName':1,'_id':0})))
 
-        self.labels_dict = dict(zip(etfs.symbol,etfs.description))
-
+        for row in etfs.iterrows():
+            self.labels_dict[row[1]['symbol']] = {
+                'asset_name':row[1]['description'],
+                'asset_type':row[1]['categoryName']
+            }
+         
         etf_comp = mongo.db['etf_components_etfdb']
         for ticker in self.tickers:
             if ticker not in self.labels_dict:
                 # Search by exact ticker name
                 response = etf_comp.find_one({'Symbol':ticker},{'Holding':1,'_id':0})
                 if response is not None:
-                    self.labels_dict[ticker] = response['Holding']
+                    self.labels_dict[ticker] = {
+                        'asset_name':response['Holding'],
+                        'asset_type':'component'
+                        }
                 else:
                 # Search by partial ticker name
                     response = etf_comp.find_one({'Symbol':{"$regex": ticker}})
                     if response is not None:
-                        self.labels_dict[ticker] = response['Holding']
+                        self.labels_dict[ticker] = {
+                            'asset_name':response['Holding'],
+                            'asset_type':'component'
+                            }
                     else:
-                        self.labels_dict[ticker] = '# Label not found #'
+                        self.labels_dict[ticker] = {
+                            'asset_name':"ticker not found",
+                            'asset_type':'ticker not found'
+                            }
         mongo.close_connection()
 
-
-    def find_match(self, ticker_part):
-        matches = []
-        counter = 0
-        for ticker in self.tickers:
-            if counter == 7: break
-            if ticker[:len(ticker_part)] == ticker_part.upper():
-                matches.append(ticker)
-                counter += 1
-        if len(matches) != 0:
-            self.matched_tickers = matches
-        else:
-            self.matched_tickers = self.default_matches
-        return matches
+    def get_prices(self, ticker, asset_type='etf',
+                    start_date='2019-01-01',end_date = None, 
+                    freq='Daily', returns=None):
+        if end_date is None:
+            end_date = datetime.datetime.now().strftime('%Y-%m-%d')
+        if asset_type.lower() == 'etf':
+            ticker = ticker.removesuffix('.US_5')
+        df = pd.DataFrame(self.tiingoClient.get_ticker_price(
+                ticker,
+                startDate=start_date,
+                endDate=end_date,
+                frequency=freq
+            ))
+        df = df[['adjClose','date']].copy()
+        df.columns = ['close','date']
+        df.set_index('date',drop=True,inplace=True)
+        if returns is not None:
+            df['close'] = round(df.close.pct_change(returns)*100,2)
+        return df
 
     def get_sentiment_data(self, ticker):
         mongo = myMongo('sentiment')

@@ -121,13 +121,29 @@ layout = html.Div([
 
 
 @app.callback(
-    [Output("strategies-description", "children"), Output("strategies-parameters", "children"), Output("pnl-percent", "children"), 
-    Output("drawdown-percent", "children"), Output("main-chart", "figure"), Output("strategies-summary", "children"), 
-    Output("assets-pie", "figure"), Output("trades-table", "data"), 
-    Output("basket-returns-barchart", "figure"), Output("basket-returns-pie", "figure"),
-    Output("description-tab", "label"), Output("paremeters-tab", "label"), Output("others-tab", "label"),
-    Output("strategies-header", "children"), Output("trades-report-header", "children"), Output("breakdown-header", "children")],
-    [Input("strategies-list", "value"), Input("graphs-options", "value"), Input("language", "value")]
+    [
+        Output("strategies-description", "children"), 
+        Output("strategies-parameters", "children"), 
+        Output("pnl-percent", "children"), 
+        Output("drawdown-percent", "children"), 
+        Output("main-chart", "figure"), 
+        Output("strategies-summary", "children"), 
+        Output("assets-pie", "figure"), 
+        Output("trades-table", "data"), 
+        Output("basket-returns-barchart", "figure"), 
+        Output("basket-returns-pie", "figure"),
+        Output("description-tab", "label"), 
+        Output("paremeters-tab", "label"), 
+        Output("others-tab", "label"),
+        Output("strategies-header", "children"), 
+        Output("trades-report-header", "children"), 
+        Output("breakdown-header", "children")
+    ],
+    [
+        Input("strategies-list", "value"), 
+        Input("graphs-options", "value"), 
+        Input("language", "value")
+    ]
 )
 
 def render_strategies_description(strategy_id, graphs_options, language):
@@ -239,7 +255,21 @@ def render_strategies_description(strategy_id, graphs_options, language):
         paramenters_tab = "指标参数"
         others_tab = "其他"
 
-
-    return descriptions_markdown, parameters_markdown, pnl, dd, prt_value_fig, strategy_summary,assets_pie_fig, trades_data, asset_class_fig, sector_fig, description_tab, paramenters_tab, others_tab, strategies_header, trades_report_header,classes_header
+    return descriptions_markdown, \
+            parameters_markdown, \
+            pnl, \
+            dd, \
+            prt_value_fig, \
+            strategy_summary, \
+            assets_pie_fig, \
+            trades_data, \
+            asset_class_fig, \
+            sector_fig, \
+            description_tab, \
+            paramenters_tab, \
+            others_tab, \
+            strategies_header, \
+            trades_report_header, \
+            classes_header
 
 
