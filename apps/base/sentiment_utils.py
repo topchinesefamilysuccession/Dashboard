@@ -4,7 +4,7 @@ import pandas as pd
 from O365 import Account, FileSystemTokenBackend
 from tiingo import TiingoClient
 
-TIINGO_TOKEN = "c50cfdc0a109426822e1a16bfa3b473e6a9240ab"
+TIINGO_TOKEN = "#####"
 config = {
     'session':True,
     'api_key':TIINGO_TOKEN
@@ -73,7 +73,7 @@ class Sentiment():
         if end_date is None:
             end_date = datetime.datetime.now().strftime('%Y-%m-%d')
         if asset_type.lower() == 'etf':
-            ticker = ticker.removesuffix('.US_5')
+            ticker = ticker.replace('.US_5','')
         df = pd.DataFrame(self.tiingoClient.get_ticker_price(
                 ticker,
                 startDate=start_date,
