@@ -4,7 +4,7 @@ import pandas as pd
 from O365 import Account, FileSystemTokenBackend
 from tiingo import TiingoClient
 
-TIINGO_TOKEN = "#####"
+TIINGO_TOKEN = "c50cfdc0a109426822e1a16bfa3b473e6a9240ab"
 config = {
     'session':True,
     'api_key':TIINGO_TOKEN

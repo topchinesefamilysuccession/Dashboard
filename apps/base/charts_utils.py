@@ -183,7 +183,7 @@ class Chart():
                     self.fig.add_trace(go.Scatter(x=price_graph.index, 
                                                     y=price_graph.close,
                                                     mode='lines',
-                                                    marker_color='darkblue',
+                                                    marker_color='black',
                                                     name='Close Price'),
                                         secondary_y=True)
 
