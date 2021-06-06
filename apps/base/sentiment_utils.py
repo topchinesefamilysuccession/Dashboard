@@ -110,7 +110,7 @@ class Sentiment():
         
         print(os.getcwd())
         # preprocessing
-        download_path = 'news_files/'
+        download_path = 'tmp/news_files/'
         if os.path.exists(download_path):
             for filepath in os.listdir(download_path):
                 os.remove(download_path + filepath)
