@@ -21,13 +21,17 @@ import datetime
 
 sentiment = Sentiment()
 
-SPINNER = "cube"
+SPINNER = "dot"
 
-def CardGenerator():
-    title = lorem.sentence()
-    if len(title) > 30:
-        title = title[:30] + '...'
-    body_text = lorem.text()
+def CardGenerator(title='', body_text='', source='', url='', publishedDate=''):
+
+    if title == '':
+        title = lorem.sentence()
+        body_text = lorem.text()
+        source = 'yahoo.com'
+
+    if len(title) > 50:
+        title = title[:50] + '...'
     if len(body_text) > 150:
         body_text = body_text[:150] + '...'
     return dbc.Card(
@@ -37,8 +41,8 @@ def CardGenerator():
                     html.P(body_text)
                 ], className='card-text'),
                 dbc.CardFooter([
-                    html.P('Positive: 4'),
-                    html.P('source: yahoo.com')
+                    html.P(publishedDate.strftime('%Y-%m-%d %H:%M:%S')),
+                    html.A(source, href=url, target="_blank", className='news-url')
                 ], className='news-card-footer')
             ],
             className='news-card')
@@ -132,10 +136,7 @@ layout = html.Div([
                         ],
                         className="news-list-title"
                     ),
-                    html.Div(
-                        children = [CardGenerator() for x in range(10)],
-                        id='news-list'
-                    )
+                    dcc.Loading(html.Div(id='news-list'), type=SPINNER)
                 ],
                 id='sentiment-news'
             ),
@@ -152,11 +153,13 @@ layout = html.Div([
         Output('chart-type','options'),
         Output('mean-trend','options'),
         Output('news_feed_title','children'),
-        Output('price-controls','children')
+        Output('price-controls','children'),
+        Output('news-list','children')
     ],
     [
         Input('ticker-selection','value'),
         Input('sentiment-chart','relayoutData'),
+        Input('chart-type','value'),
         Input('mean-trend','value'), 
         Input('language','value'),
         Input('price-checkbox','value'),
@@ -165,7 +168,7 @@ layout = html.Div([
     ]
     )
 
-def render_Page(ticker, relayoutData, mean_trend, language,price_checkbox,returns_checkbox,returns_type):
+def render_Page(ticker, relayoutData, chart_type, mean_trend, language,price_checkbox,returns_checkbox,returns_type):
     if ticker == None:
         raise PreventUpdate
     
@@ -249,15 +252,17 @@ def render_Page(ticker, relayoutData, mean_trend, language,price_checkbox,return
     sentiment_chart = Chart('Sentiment', multiple_axes=True)
 
     if 'xaxis.range[0]' in relayoutData:
-        sentiment_chart.draw_sentiment_chart(df, 
+        sentiment_chart.draw_sentiment_chart(df, chart_type=chart_type,
                                             dates=[relayoutData['xaxis.range[0]'].split(' ')[0],relayoutData['xaxis.range[1]'].split(' ')[0]],
                                             mean_trend=mean_trend, price_graph=price_df)
-        #sentiment.get_news_list(ticker,df.loc[relayoutData['xaxis.range[0]']:relayoutData['xaxis.range[1]']].index) 
-        #print(sentiment.news_list)
+        sentiment.get_news(ticker,relayoutData['xaxis.range[1]'].split(' ')[0])
     else:
-        sentiment_chart.draw_sentiment_chart(df, mean_trend=mean_trend, price_graph=price_df)
-        #sentiment.get_news_list(ticker,df.index)
+        #sentiment.get_news(ticker=ticker, target_date=sentiment.initial_target_date)
+        sentiment_chart.draw_sentiment_chart(df, chart_type=chart_type, mean_trend=mean_trend, price_graph=price_df)
+        sentiment.get_news(ticker)
     
+    news_list = [CardGenerator(x['title'],x['description'],x['source'],x['url'],x['publishedDate']) for x in sentiment.news_list]
+
     sentiment_fig = sentiment_chart.get_chart()
 
     return sentiment_fig,\
@@ -265,4 +270,5 @@ def render_Page(ticker, relayoutData, mean_trend, language,price_checkbox,return
             chart_options,\
             mTrend_options,\
             news_feed_title, \
-            price_returns_controls
+            price_returns_controls, \
+            news_list

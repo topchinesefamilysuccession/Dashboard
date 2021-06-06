@@ -6,3 +6,4 @@ __pycache__
 apps/base/custom_libraries/config.py
 apps/base/custom_libraries/__pycache__
 credentials.json
+news_files

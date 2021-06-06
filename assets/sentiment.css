@@ -108,27 +108,26 @@
     padding: 10px 10px 0px 10px;
 }
 
-
-#news-list {
+#sentiment-news > div:last-child {
     flex-grow: 1;
     margin: 10px;
     overflow-y:scroll;
 }
 
-#news-list::-webkit-scrollbar-track
+#sentiment-news > div:last-child::-webkit-scrollbar-track
 {
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
 	border-radius: 10px;
 	background-color: #F5F5F5;
 }
 
-#news-list::-webkit-scrollbar
+#sentiment-news > div:last-child::-webkit-scrollbar
 {
 	width: 7px;
 	background-color: #F5F5F5;
 }
 
-#news-list::-webkit-scrollbar-thumb
+#sentiment-news > div:last-child::-webkit-scrollbar-thumb
 {
 	border-radius: 10px;
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
@@ -152,6 +151,21 @@
 
 .card-text > p {
     margin: 0px;
+}
+
+.news-url {
+    font-size: 12px;
+}
+
+.news-url:link {
+    color: darkblue;
+}
+.news-url:hover {
+    color: blue;
+}
+
+.news-url:visited {
+    color:darkblue;
 }
 
 .news-card-footer {
