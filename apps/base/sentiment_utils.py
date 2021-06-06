@@ -109,13 +109,14 @@ class Sentiment():
     def get_news(self, ticker, target_date=None,news_number=50, max_look_back_period=20):
         
         print(os.getcwd())
+        print(os.path.exists('tmp'))
         # preprocessing
-        download_path = 'tmp/news_files/'
+        download_path = 'tmp'
         if os.path.exists(download_path):
             for filepath in os.listdir(download_path):
                 os.remove(download_path + filepath)
             os.removedirs(download_path)
-        os.mkdir(download_path)
+        #os.mkdir(download_path)
         
         # TARGET DATE = YYYY-MM-DD
 
