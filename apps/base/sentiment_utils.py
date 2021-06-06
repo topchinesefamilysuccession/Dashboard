@@ -108,8 +108,9 @@ class Sentiment():
 
     def get_news(self, ticker, target_date=None,news_number=50, max_look_back_period=20):
         
-        print(os.getcwd())
-        print(os.path.exists('tmp'))
+        print('Current directory:' + os.getcwd())
+        print('Other files:',os.listdir(os.getcwd()))
+        print('Does the tnp folder exists here? -',os.path.exists('tmp'))
         # preprocessing
         download_path = 'tmp'
         if os.path.exists(download_path):
