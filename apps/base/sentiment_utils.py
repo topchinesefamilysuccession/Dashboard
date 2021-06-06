@@ -117,7 +117,7 @@ class Sentiment():
             for filepath in os.listdir(download_path):
                 os.remove(download_path + filepath)
             os.removedirs(download_path)
-        #os.mkdir(download_path)
+        os.mkdir(download_path)
         
         # TARGET DATE = YYYY-MM-DD
 
