@@ -112,7 +112,7 @@ class Sentiment():
         print('Other files:',os.listdir(os.getcwd()))
         print('Does the tnp folder exists here? -',os.path.exists('tmp'))
         # preprocessing
-        download_path = 'tmp'
+        download_path = 'tmp/'
         if os.path.exists(download_path):
             for filepath in os.listdir(download_path):
                 os.remove(download_path + filepath)
