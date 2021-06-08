@@ -63,26 +63,32 @@ class MacroTable():
             return []
         measures = {}
         placeholder = pd.DataFrame()
+        counter = 0
         for report_name, df in self.reports.items():
             if measure_key == "all":
+                dict_keys = {"report":report_name}
                 for key in ["current", "previous", "Y1", "Y2"]:
                     rslt = self._treat_df(key, df)
                     if len(rslt) > 0:
-                        tmp_df = pd.DataFrame({"report":report_name, "period":key, "value":rslt.get("value")}, index=[rslt.get("date")])
-                        placeholder = placeholder.append(tmp_df)
+                        dict_keys.update({key:rslt.get("value")})
+                if len(placeholder) == 0:
+                    placeholder = pd.DataFrame(dict_keys,  index=[counter])
+                else:
+                    placeholder = placeholder.append(pd.DataFrame(dict_keys,  index=[counter]))
                 measures = placeholder
             else:
                 rslt = self._treat_df(measure_key, df)
                 if len(rslt) > 0:
                     measures.update({report_name:rslt})
+            counter += 1
         return measures
 
 
         
 
 
-
-macro = MacroTable("inflation")
-macro.load_reports()
-reports = macro.get_measure_from_reports("all")
-print(reports)
+if __name__ == "__main__":
+    macro = MacroTable("inflation")
+    macro.load_reports()
+    reports = macro.get_measure_from_reports("all")
+    print(reports)

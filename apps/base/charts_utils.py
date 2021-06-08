@@ -80,7 +80,6 @@ def init_chart():
     return fig
 
 
-
 class Chart():
     def __init__(self, chart_name, multiple_axes=False):
         self.chart_name=chart_name

@@ -9,4 +9,6 @@ mapping = {
 
 
 def get_tables_mapping(macro_indicator):
+    if macro_indicator == "macro_indicators":
+        return mapping.keys()
     return mapping.get(macro_indicator, "")
