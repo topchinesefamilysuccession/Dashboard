@@ -63,25 +63,30 @@ class MacroTable():
             return []
         measures = {}
         placeholder = pd.DataFrame()
+        additional_details_df = pd.DataFrame()
         counter = 0
         for report_name, df in self.reports.items():
             if measure_key == "all":
                 dict_keys = {"report":report_name}
+                additional_details = {"report":report_name}
                 for key in ["current", "previous", "Y1", "Y2"]:
                     rslt = self._treat_df(key, df)
                     if len(rslt) > 0:
                         dict_keys.update({key:rslt.get("value")})
+                        additional_details.update({key:rslt.get("date")})
                 if len(placeholder) == 0:
                     placeholder = pd.DataFrame(dict_keys,  index=[counter])
+                    additional_details_df = pd.DataFrame(additional_details,  index=[counter])
                 else:
                     placeholder = placeholder.append(pd.DataFrame(dict_keys,  index=[counter]))
+                    additional_details_df = additional_details_df.append(pd.DataFrame(additional_details,  index=[counter]))
                 measures = placeholder
             else:
                 rslt = self._treat_df(measure_key, df)
                 if len(rslt) > 0:
                     measures.update({report_name:rslt})
             counter += 1
-        return measures
+        return measures, additional_details_df
 
 
         

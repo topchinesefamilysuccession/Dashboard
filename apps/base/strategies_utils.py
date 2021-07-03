@@ -9,16 +9,35 @@ backtesting_strategies = {
 }
 
 class Strategies():
-    def __init__(self):
+    def __init__(self, data_dict = None):
         self.strategies_description = None
         self.strategies_general_stats = None
-        self.get_strategies_dfs()
+        if data_dict is None:
+            self.get_strategies_dfs()
+        else:
+            self.build_df_from_data_dict(data_dict)
+
     
     def _filter_df_by_id(self, df, filter):
         if type(filter) != list:
             raise ValueError("Please pass filter as a list")
         df = df[df["strategy_id"].isin(filter)]
         return df
+    
+    def build_df_from_data_dict(self, data_dict):
+        self.strategies_general_stats = pd.read_json(data_dict.get("stats"))
+        self.strategies_portfolio_value = pd.read_json(data_dict.get("positions"))
+        self.strategies_returns = pd.read_json(data_dict.get("returns"))
+        self.strategies_trades =pd.read_json(data_dict.get("trades"))
+        self.strategies_portfolio_value_daily_change =pd.read_json(data_dict.get("portfolio_value"))
+        db = myMongo("etf")
+
+        self.etf_descriptions = db.find("etf", "etf_name", "etf_description")
+
+        self.strategies_portfolio_value_daily_change.to_csv("TODELETE.csv")
+
+        db.close_connection()
+
         
     def get_strategies_dfs(self):
         db = myMongo("backtesting")
@@ -28,12 +47,6 @@ class Strategies():
         self.strategies_returns = db.find("strategies_returns", "all", None)
         self.strategies_trades = db.find("strategies_trades", "all", None)
 
-
-        print(self.strategies_description.info())
-        print(self.strategies_general_stats.info())
-        print(self.strategies_portfolio_value.info())
-        print(self.strategies_returns.info())
-        print(self.strategies_trades.info())
 
         self.strategies_description["id"] = self.strategies_description["strategy_id"].apply(lambda x : float(x.split("S")[-1]))
         self.strategies_description.sort_values("id",inplace=True)
@@ -83,15 +96,19 @@ class Strategies():
         return df
 
 
-    def get_strategies_portfolio_value(self, filter):
-        df = self.strategies_portfolio_value
+    def get_strategies_portfolio_value(self, filter=None, daily_change=False):
+        if not daily_change: 
+            df = self.strategies_portfolio_value
+        else:
+            df = self.strategies_portfolio_value_daily_change
+        
         df.sort_values(by=['date'],inplace=True)
-        if filter:
+        if not filter is None:
             df = self._filter_df_by_id(df, filter)
             df.sort_values("date", inplace=True)
         return df
 
-    def get_assets_mean_distribution(self, filter, top_size=5):
+    def get_assets_mean_distribution(self, filter=None, top_size=5, as_df = False):
         df = self.strategies_portfolio_value.copy()
 
         if filter:
@@ -103,13 +120,18 @@ class Strategies():
 
         df_sorted = df.mean().sort_values(ascending=False)
 
-        df = df_sorted[:top_size]
-        
-        df["other"] = df_sorted[top_size:].sum()
+        if top_size:
+            df = df_sorted[:top_size]
+            df["other"] = df_sorted[top_size:].sum()
+        else:
+            df = df_sorted
+
+        if as_df:
+            return pd.DataFrame({"assets": df.index.tolist(), "values":df.values}, index=list(range(len(df.values))))
 
         return df
 
-    def get_trades(self, filter):
+    def get_trades(self, filter=None):
         df = self.strategies_trades.copy()
 
         if filter:
