@@ -1,5 +1,13 @@
 import dash_html_components as html
 from dash_table import FormatTemplate
+from .custom_libraries.mongo_connections import myMongo
+
+
+def get_all_xtb_assets():
+    db = myMongo("etf")
+    df = db.find("etf", "etf_name", "etf_description")
+    return df
+
 
 
 ipsum_lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"

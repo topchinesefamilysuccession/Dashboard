@@ -1,0 +1,61 @@
+.landing-content{
+    width:60%;
+    margin: auto;
+    margin-top: 12%;
+}
+
+#landing-selection{
+    margin: auto;
+    margin-bottom: 6px;
+}
+
+#go-btn{
+    margin-top: 10px;
+    float: right;
+    width: 8vw;
+    padding:9px 25px;
+    border:none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease 0s;
+    background-color: rgba(0,136,169,1);
+    color:#edf0f1;
+}
+
+#go-btn:hover{
+    background-color: rgba(0,136,169,0.8);
+    align-self: center;
+    margin-right: 6px;
+}
+
+#suggestions-id {
+    display: none;
+    margin-top: 2%
+}
+
+.suggestions-div .Select-control{
+    background-color: #f2f2f2;
+    border: none;
+    
+}
+.suggestions-div .Select-clear-zone{
+    display: none;
+}
+
+.suggestions-div .Select-arrow-zone{
+    display: None;
+}
+
+.landing-controls-div{
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+
+#suggestions-toggle{
+    align-self: center;
+    margin-left: 6px;
+}
+

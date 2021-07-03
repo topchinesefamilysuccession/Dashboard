@@ -85,7 +85,18 @@ class Chart():
         self.fig.update_layout(chart_layout)
     
     def draw_portfolio_value(self, df, name):
-        self.fig.add_trace(go.Scatter(mode="lines",x=df["date"], y=df["prt_value"], name=name))
+        if name == "Portfolio Value":
+            hover_dict = {}
+            for idx, row in df.iterrows():
+                p = row[[c for c in row.index.values if c not in ["date"]]]
+                p.sort_values(ascending=False, inplace=True, key=abs)
+                hover_dict.update({row["date"]: p.head(6).to_dict()})
+            text = ["<br>".join([f"<i>{k2}: {(v2*100):.2f}%</i>" if k2 !="prt_value" else f"<b>Portfolio Value: {v2:,.0f}$<b><br>" for k2,v2 in v.items()]) for k,v in hover_dict.items()]
+        else:
+            text = [f"{name}"]
+        
+        self.fig.add_trace(go.Scatter(mode="lines",x=df["date"], y=df["prt_value"], name='', text = text, hovertemplate="<b>%{text}</b>"))
+
         
     def draw_df(self, df, name, x_name, y_name):
         self.fig.add_trace(go.Scatter(mode="lines",x=df[x_name], y=df[y_name], name=name))
