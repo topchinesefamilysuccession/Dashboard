@@ -1,11 +1,16 @@
 import dash_core_components as dcc
 import dash_html_components as html
+
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
+import dash_bootstrap_components as dbc
+
+
 import dash_table
 import pandas as pd
 
 from .base.strategies_utils import Strategies
+from .base.simulation_utils import Simulation
 from .base.charts_utils import Chart, init_chart
 from .base.general_utils import get_all_xtb_assets
 
@@ -17,6 +22,41 @@ import plotly.express as px
 general_strategies = Strategies()
 
 all_assets = get_all_xtb_assets()
+
+
+def fix_country_list(rslt):
+    dict_01 = {}
+    for k,v in rslt.items():
+        splited_country = k.split(",")
+        if len(splited_country) > 1:
+            splited_country = [c.strip() for c in splited_country]
+            dict_01.update(dict(zip(splited_country, [((v / len(splited_country)))] * len(splited_country))))
+        else:
+            dict_01.update({k:v})
+
+    return dict_01
+
+
+modal = html.Div(
+    [
+        dbc.Button("Simulation", id="open", n_clicks=0),
+        dbc.Modal(
+            [
+                dbc.ModalHeader("Header"),
+                dbc.ModalBody("This is the content of the modal"),
+                dcc.Graph(id="simulation-graph"),
+                dbc.ModalFooter(
+                    dbc.Button(
+                        "Close", id="close", className="ml-auto", n_clicks=0
+                    )
+                ),
+            ],
+            id="modal",
+            is_open=False,
+        ),
+    ]
+)
+
 
 
 def load_strategy(data_dict):
@@ -44,6 +84,14 @@ def load_strategy(data_dict):
     df["country"] = df["assets"].apply(lambda x: "cash" if x == "cash" else translator_df[translator_df["symbol"] == x]["Region (Specific)"].values[0])
 
 
+    df_map = df
+    df_map["weight_decimal"] = df_map["weight"].apply(lambda x: float(x.split("%")[0])/ 100)
+    rslt = df[(~df["country"].isna()) & (df["country"] != "cash")][["weight_decimal", "country"]].groupby(by=["country"]).sum().to_dict()["weight_decimal"]
+    rslt = fix_country_list(rslt)
+    df_map = pd.DataFrame( columns=["country"], data=list(rslt.values()), index=rslt.keys())
+    df_map["country"] = df_map["country"]
+
+
 
     df.drop("values", axis=1, inplace=True)
 
@@ -57,6 +105,7 @@ def load_strategy(data_dict):
 
     layout = html.Div([
 
+        dcc.Loading(modal),    
         html.Div([
                 dcc.Checklist(id="graphs-options", 
                 options=[
@@ -64,7 +113,6 @@ def load_strategy(data_dict):
                     {"label":" 1-3 Year Treasury Bonds ", "value":"Bonds"},
                     {"label":" Gold ", "value":"Gold"},
                     {"label":" VIX ", "value":"VIX"},
-                    
                     ], 
                 
                 labelStyle={'display': 'inline-block',"margin-right": "15px", "margin-top": "20px"},
@@ -110,9 +158,9 @@ def load_strategy(data_dict):
         )], id="stats"), 
 
 
-        # dcc.Graph(fig = px.scatter_geo(df, locations="country", color="country",
-        #             hover_name="country", size=df_values,
-        #             projection="natural earth"))
+        dcc.Graph(figure = px.scatter_geo(df_map, locations=df_map.index, color=df_map.index,
+                    hover_name=df_map.index, size="country",
+                    projection="natural earth")),
 
         # html.Div([
         #     html.H4("Trades Report", id="trades-report-header"),
@@ -144,6 +192,8 @@ def load_strategy(data_dict):
     return layout
 
 
+
+
 @app.callback(
     [Output("main-chart", "figure")],
     [Input("graphs-options", "value"), 
@@ -169,3 +219,20 @@ def render_strategies_description(graphs_options, data_dict):
     prt_value_fig = prt_value_fig.get_chart()
 
     return  [prt_value_fig]
+
+
+
+@app.callback(
+    [Output("modal", "is_open"), Output("simulation-graph", "figure")],
+    [Input("open", "n_clicks"), Input("close", "n_clicks")],
+    [State("modal", "is_open"), State("backtesting-results", "data")],
+)
+def toggle_modal(n1, n2, is_open, backtesting_data):
+    if n1 or n2:
+        df = pd.DataFrame(columns = ['assets', 'weight', 'asset_translation', 'country', 'weight_decimal'], data=backtesting_data)
+        print([x for x in df["assets"].values[1:]],[float(x[:-1])/100 for x in df["weight"].values[1:]])
+        simulation = Simulation([x for x in df["assets"].values[1:]],[float(x[:-1])/100 for x in df["weight"].values[1:]])
+        print(simulation.get_results())
+        return not is_open, {}
+        
+    return is_open, {}
