@@ -2,6 +2,10 @@ import plotly.graph_objects as go
 import pandas as pd
 import time
 import datetime
+import squarify
+import matplotlib
+import matplotlib.cm
+
 
 bars_colors = ["#413c69", "#4a47a3", "#709fb0", "#a7c5eb", "#c6ffc1"]
 # pie_colors = ["#003f5c","#2f4b7c","#665191","#a05195","#d45087","#f95d6a","#ff7c43","#ffa600"]
@@ -53,6 +57,12 @@ general_chart_layout = {
                                 "yaxis":{"title":"Values"},
                                 "autosize":True
                                 }
+trend_chart_layout = {
+                                "paper_bgcolor" : "rgba(0,0,0,0)",
+                                "plot_bgcolor" : "rgba(0,0,0,0)",
+                                "autosize":True,
+                                "margin":{"t":10,"b":0,"l":0,"r":0}
+}
 
 
 charts_layouts = {
@@ -60,7 +70,8 @@ charts_layouts = {
     "Pie Chart" : pie_chart_layout,
     "Bar Chart" : bar_chart_layout,
     "Sentiment": sentiment_chart_layout,
-    "General":general_chart_layout
+    "General":general_chart_layout,
+    "Trend Chart":trend_chart_layout
 }
 
 
@@ -186,5 +197,76 @@ class Chart():
                     x=1.12
                 ))
 
+    def getTrendMap(self, df):
+
+        values = df.news_count.to_list()
+        labels = [x.upper() for x in df.keyword.to_list()]
+
+        norm = matplotlib.colors.Normalize(vmin=0,vmax=1.3)
+
+        cmapReds=matplotlib.cm.Reds
+        cmapGreens = matplotlib.cm.Greens
+
+        colors = []
+        for index, row in df.iterrows():
+            if row['title_negative_count'] > row['title_positive_count']:
+                colors.append(matplotlib.colors.to_hex(cmapReds(norm(row['title_negative_score']))))
+            else:
+                colors.append(matplotlib.colors.to_hex(cmapGreens(norm(row['title_positive_score']))))
+
+        x = 0
+        y = 0
+        width = 100
+        height = 100
+
+        normed = squarify.normalize_sizes(values, width, height)
+        rects = squarify.squarify(normed, x, y, width, height)
+
+        shapes = []
+        annotations = []
+
+        for r, color, text in zip(rects, colors, labels):
+            shapes.append( 
+                dict(
+                    type = 'rect', 
+                    x0 = r['x'], 
+                    y0 = r['y'], 
+                    x1 = r['x']+r['dx'], 
+                    y1 = r['y']+r['dy'],
+                    line = dict( width = 2, color = '#ffffff' ),
+                    fillcolor = color
+                ) 
+            )
+            annotations.append(
+                dict(
+                    x = r['x']+(r['dx']/2),
+                    y = r['y']+(r['dy']/2),
+                    text = text.replace(' ','<br>'),
+                    showarrow = False,
+                    font=dict(
+                        size=14,
+                        color="#ffffff"
+                        )
+                )
+            )
+        
+        self.fig.add_trace(go.Scatter(
+                    x = [ r['x']+(r['dx']/2) for r in rects ], 
+                    y = [ r['y']+(r['dy']/2) for r in rects ],
+                    text = labels, 
+                    mode = 'text'
+                    # textfont = dict(color="#ffffff", size=14)
+                )
+            )
+        # self.fig.add_annotation(annotations)      
+        self.fig.update_layout(
+            autosize=True,
+            xaxis={'showgrid':False, 'zeroline':False, 'showticklabels': False},
+            yaxis={'showgrid':False, 'zeroline':False, 'showticklabels': False},
+            shapes=shapes,
+            annotations=annotations,
+            hovermode='closest'
+        )
+            
     def get_chart(self):
         return self.fig

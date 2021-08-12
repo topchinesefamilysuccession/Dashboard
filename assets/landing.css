@@ -1,13 +1,56 @@
 .landing-content{
-    width:60%;
-    margin: auto;
-    margin-top: 12%;
+    
+}
+
+.modebar{
+    display: none !important;
 }
 
 #landing-selection{
     margin: auto;
     margin-bottom: 6px;
 }
+
+.search-bar{
+    width:60%;
+    margin:auto;
+    padding-top:3%;
+}
+
+.trends-title{
+    text-align: center;
+}
+
+.trends-title p {
+    color: grey;
+}
+
+.sentiment-trends{
+    width:70%;
+    margin: auto;
+}
+
+.trend-graphs-container {
+    display: flex;
+    justify-content:space-between;
+    width:100%
+}
+
+.ticker-trend {
+    width:49%;
+}
+
+.tag-trend{
+    width:49%;
+}
+
+/* .ticker-trend div.js-plotly-plot{
+    width:100% !important;
+}
+
+.tag-trend  div.js-plotly-plot{
+    width:100% !important;
+} */
 
 #go-btn{
     margin-top: 10px;
