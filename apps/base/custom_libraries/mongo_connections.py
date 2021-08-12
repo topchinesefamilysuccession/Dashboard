@@ -8,14 +8,17 @@ import dns
 import os
 import sys
 
+from ..cred_utils import get_credentials
+
 class myMongo():
     def __init__(self, db_name):
-        self.user = 'M10user'#os.getenv("USERNAME")
-        self.pwd = 'Warsaw2021'#os.getenv("PASSWORD")
-        self.cluster_name = 'mongo.i3qsl.mongodb.net'#os.getenv("CLUSTER")
+        self.user = get_credentials('MONGO_USER')
+        self.pwd = get_credentials('MONGO_PASSWORD')
+        self.cluster_name = get_credentials('MONGO_CLUSTER')
         self.db_name = db_name
         self.cnn_str = f"mongodb+srv://{self.user}:{self.pwd}@{self.cluster_name}/{self.db_name}?retryWrites=true&w=majority"
-        self.cluster = MongoClient(self.cnn_str, retryWrites=False)
+        print(self.cnn_str)
+        self.cluster = MongoClient(self.cnn_str)
         self.db = self.cluster[self.db_name]
     
     def close_connection(self):
