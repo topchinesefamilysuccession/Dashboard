@@ -4,7 +4,7 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 from dash_html_components.Div import Div
 from .base.fred_utils import FredHandler
-from .base.charts_utils import Chart, init_chart, getTreeMap
+from .base.charts_utils import Chart, init_chart
 from .base.api_handler import StrategiesAPI
 from .base.trend_utils import TrendsMaster
 import dash_table
