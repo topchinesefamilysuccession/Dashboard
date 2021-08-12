@@ -18,4 +18,4 @@ RUN pip install -r requirements.txt
 RUN pip install gunicorn
 
 # Run app.py when the container launches
-CMD exec gunicorn --bind :$PORT --log-level info --workers 1 --threads 8 --timeout 0 app:server
+CMD exec gunicorn --bind :$PORT --log-level info --workers 1 --threads 8 --timeout 0 index:server
