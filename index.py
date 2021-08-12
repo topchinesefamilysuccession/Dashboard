@@ -4,6 +4,8 @@ from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 # import base64
 
+import os
+
 from app import app 
 from apps import backtesting, allocations, market, strategies, sentiment, macro, landing
 
@@ -104,4 +106,4 @@ def display_page(pathname, data):
 server = app.server
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT',8080)))
