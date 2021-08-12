@@ -1,4 +1,5 @@
 import dash_core_components as dcc
+from dash_core_components.Loading import Loading
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
@@ -59,15 +60,18 @@ layout = html.Div([
             html.H3('Daily Top Trends'),
             html.P(datetime.today().date().strftime("%d %B %Y"))
         ], className='trends-title'),
-        html.Div([
+        dcc.Loading(children=[
             html.Div([
-                dcc.Graph(id='ticker-treemap'),
-            ], className='ticker-trend'),
-            html.Div([
-                dcc.Graph(id='tag-treemap'),
-            ], className='tag-trend'),
-        ], className='trend-graphs-container'),
-    ], className='sentiment-trends'),    
+                html.Div([
+                    dcc.Graph(id='ticker-treemap'),
+                ], className='ticker-trend'),
+                html.Div([
+                    dcc.Graph(id='tag-treemap'),
+                ], className='tag-trend'),
+            ], className='trend-graphs-container')
+        ])
+    ], className='sentiment-trends')
+            
         
 ], className="landing-content")
 
