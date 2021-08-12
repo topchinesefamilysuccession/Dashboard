@@ -15,9 +15,11 @@ class TrendsMaster():
 
     def __connectDB(self):
         ''' Establish connections with GCP '''
-        cred = credentials.Certificate(os.path.dirname(os.path.realpath(__file__)) + '\\google_key.json')
-        firebase_admin.initialize_app(cred)
-        # firebase_admin.initialize_app()
+        if os.path.isfile(os.path.dirname(os.path.realpath(__file__)) + '\\google_key.json'):
+            cred = credentials.Certificate(os.path.dirname(os.path.realpath(__file__)) + '\\google_key.json')
+            firebase_admin.initialize_app(cred)
+        else:
+            firebase_admin.initialize_app()
         db = firestore.client()
         return db.collection('top_trends')
 
