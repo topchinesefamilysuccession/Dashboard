@@ -17,7 +17,6 @@ class myMongo():
         self.cluster_name = get_credentials('MONGO_CLUSTER')
         self.db_name = db_name
         self.cnn_str = f"mongodb+srv://{self.user}:{self.pwd}@{self.cluster_name}/{self.db_name}?retryWrites=true&w=majority"
-        print(self.cnn_str)
         self.cluster = MongoClient(self.cnn_str)
         self.db = self.cluster[self.db_name]
     
