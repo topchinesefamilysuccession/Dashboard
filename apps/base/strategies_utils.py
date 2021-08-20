@@ -31,14 +31,10 @@ class Strategies():
         self.strategies_trades =pd.read_json(data_dict.get("trades"))
         self.strategies_portfolio_value_daily_change =pd.read_json(data_dict.get("portfolio_value"))
         db = myMongo("etf")
-
         self.etf_descriptions = db.find("etf", "etf_name", "etf_description")
-
-        self.strategies_portfolio_value_daily_change.to_csv("TODELETE.csv")
-
         db.close_connection()
 
-        
+    
     def get_strategies_dfs(self):
         db = myMongo("backtesting")
         self.strategies_description = db.find("strategies_description", "all", None)
