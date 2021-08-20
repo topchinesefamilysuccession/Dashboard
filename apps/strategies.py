@@ -1,3 +1,4 @@
+import dash
 import dash_core_components as dcc
 import dash_html_components as html
 
@@ -36,15 +37,29 @@ def fix_country_list(rslt):
 
     return dict_01
 
-
+ 
 modal = html.Div(
     [
         dbc.Button("Simulation", id="open", n_clicks=0),
         dbc.Modal(
             [
-                dbc.ModalHeader("Header"),
-                dbc.ModalBody("This is the content of the modal"),
-                dcc.Graph(id="simulation-graph"),
+                dbc.ModalHeader("Simulation Results"),
+                html.Div([
+                html.Label("Simulation Days"),
+                dcc.Input(id="simulation-days", type="number"),
+                html.Button("Re-Run New Simulation", id="run-simulation",className="generic-btn")
+
+            ], id="simulation-days-div"),
+                dcc.Checklist(id="simulation-options", 
+                options=[
+                    {"label":" Best Case Scenario ", "value":"best"}, 
+                    {"label":" Worst Case Scenarion ", "value":"worst"},
+                    ], 
+                
+                labelStyle={'display': 'inline-block',"margin-right": "15px", "margin-top": "20px"},
+                ),
+                html.P(id="simulation-details"), 
+                dcc.Loading(dcc.Graph(id="simulation-graph")),
                 dbc.ModalFooter(
                     dbc.Button(
                         "Close", id="close", className="ml-auto", n_clicks=0
@@ -52,6 +67,7 @@ modal = html.Div(
                 ),
             ],
             id="modal",
+            size="xl",
             is_open=False,
         ),
     ]
@@ -104,7 +120,7 @@ def load_strategy(data_dict):
 
 
     layout = html.Div([
-
+        dcc.Store(id='simulation-store'),
         dcc.Loading(modal),    
         html.Div([
                 dcc.Checklist(id="graphs-options", 
@@ -161,32 +177,6 @@ def load_strategy(data_dict):
         dcc.Graph(figure = px.scatter_geo(df_map, locations=df_map.index, color=df_map.index,
                     hover_name=df_map.index, size="country",
                     projection="natural earth")),
-
-        # html.Div([
-        #     html.H4("Trades Report", id="trades-report-header"),
-        #     html.Div([
-        #         dash_table.DataTable(
-        #             id="trades-table", 
-        #             columns =  [{"id":v, "name":v} for v in trades.columns],
-        #             data = trades.to_dict("records"),
-        #             page_size=14,
-        #             filter_action="native",
-        #             sort_action="native",
-        #             sort_mode="multi",
-        #             export_format="csv", 
-        #             style_table={'width': '100%'},
-        #             style_header={'textAlign': 'center'},
-        #             style_cell_conditional=[
-        #                                     {
-        #                                         'if': {'column_id': c},
-        #                                         'textAlign': 'center'
-        #                                     } for c in ['date', 'symbol']
-        #                                 ],
-        #         ) 
-        #     ], className="trades-table-div")
-
-        # ], className="trades-content"),
-        
     ])
 
     return layout
@@ -223,16 +213,60 @@ def render_strategies_description(graphs_options, data_dict):
 
 
 @app.callback(
-    [Output("modal", "is_open"), Output("simulation-graph", "figure")],
-    [Input("open", "n_clicks"), Input("close", "n_clicks")],
-    [State("modal", "is_open"), State("backtesting-results", "data")],
+    [Output("modal", "is_open"), Output("simulation-graph", "figure"), Output("simulation-store", "data"), Output("simulation-details", "children")],
+    [Input("open", "n_clicks"), Input("close", "n_clicks"),  Input("run-simulation", "n_clicks")],
+    [State("simulation-options", "value"), State("modal", "is_open"), State("backtesting-results", "data"), State("simulation-store", "data"), State("simulation-days", "value")],
 )
-def toggle_modal(n1, n2, is_open, backtesting_data):
-    if n1 or n2:
-        df = pd.DataFrame(columns = ['assets', 'weight', 'asset_translation', 'country', 'weight_decimal'], data=backtesting_data)
-        print([x for x in df["assets"].values[1:]],[float(x[:-1])/100 for x in df["weight"].values[1:]])
-        simulation = Simulation([x for x in df["assets"].values[1:]],[float(x[:-1])/100 for x in df["weight"].values[1:]])
-        print(simulation.get_results())
-        return not is_open, {}
+def toggle_modal(n1, n2,re_run_btn, options, is_open, backtesting_data, previous_data, simulation_days):
+    ctx = dash.callback_context
+
+    if not ctx.triggered:
+        button_id = None
+    else:
+        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+    
+    if button_id is None and n1 < 1 and n2 < 1:
+        raise PreventUpdate
+
+    if button_id == "open" or button_id == "run-simulation":
         
-    return is_open, {}
+        if not previous_data or not simulation_days is None:
+            df = pd.DataFrame(columns = ['assets', 'weight', 'asset_translation', 'country', 'weight_decimal'], data=backtesting_data)
+            assets = [x for x in df["assets"].values[1:]]
+            weights = [float(x[:-1])/100 for x in df["weight"].values[1:]]
+            
+            if  not simulation_days is None:
+                simulation = Simulation(assets,weights, simulation_days)
+            else:
+                simulation = Simulation(assets,weights)
+
+            simulation_results = simulation.get_results()[0]
+        else:
+            simulation_results = pd.read_json(previous_data)
+        
+        past = simulation_results["Adj Close Portfolio"].tail(100)
+        future_50 = simulation_results["P50_Portfolio"].tail(100)
+
+        simulation_fig = Chart("Simulation")
+
+        simulation_fig.draw_simulation(past, "historical")
+        simulation_fig.draw_simulation(future_50, "Forecast")
+        
+        if not options is None:
+            if "best" in options:
+                future_90 = simulation_results["P90_Portfolio"].tail(100)
+                simulation_fig.draw_simulation(future_90, "Best Case Scenario")
+
+            if "worst" in options:
+                future_10 = simulation_results["P10_Portfolio"].tail(100)
+                simulation_fig.draw_simulation(future_10, "Worst Case Scenario")
+
+        simulation_fig = simulation_fig.get_chart()
+        
+        simulation_details = f"Simulation ran for {simulation_days if simulation_days is not None else 20} days!"
+        
+        return True, simulation_fig, simulation_results.to_json(), simulation_details
+    elif button_id == "close":
+        return False, {}, previous_data, ""
+        
+    
