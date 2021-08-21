@@ -186,8 +186,8 @@ class Chart():
                     x=1.12
                 ))
 
-    def draw_simulation(self, df, name):
-        self.fig.add_trace(go.Scatter(mode="lines",x=df.index.strftime("%Y/%m/%d"), y=df, name=name))
+    def draw_simulation(self, df, name, color):
+        self.fig.add_trace(go.Scatter(mode="lines",x=df.index.strftime("%Y/%m/%d"), y=df, name=name, line={"color":color}))
 
     def get_chart(self):
         return self.fig

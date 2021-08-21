@@ -249,17 +249,17 @@ def toggle_modal(n1, n2,re_run_btn, options, is_open, backtesting_data, previous
 
         simulation_fig = Chart("Simulation")
 
-        simulation_fig.draw_simulation(past, "historical")
-        simulation_fig.draw_simulation(future_50, "Forecast")
+        simulation_fig.draw_simulation(past, "historical", "blue")
+        simulation_fig.draw_simulation(future_50, "Forecast", "purple")
         
         if not options is None:
             if "best" in options:
                 future_90 = simulation_results["P90_Portfolio"].tail(100)
-                simulation_fig.draw_simulation(future_90, "Best Case Scenario")
+                simulation_fig.draw_simulation(future_90, "Best Case Scenario", "green")
 
             if "worst" in options:
                 future_10 = simulation_results["P10_Portfolio"].tail(100)
-                simulation_fig.draw_simulation(future_10, "Worst Case Scenario")
+                simulation_fig.draw_simulation(future_10, "Worst Case Scenario", "red")
 
         simulation_fig = simulation_fig.get_chart()
         
