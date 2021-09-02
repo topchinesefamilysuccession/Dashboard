@@ -1,5 +1,6 @@
 from .api_handler import SimulationsApi
 import pandas as pd
+import time
 
 class Simulation():
     def __init__(self, assets, weights, days=20):
@@ -14,7 +15,9 @@ class Simulation():
         return simulation.run_simulation() 
 
     def get_results(self):
+        start = time.monotonic()
         r = self.simulation
+        print(f'Time taken for simulation: {time.monotonic() - start}')
         if not r is None:
             self.status = 200
             results, returns = pd.read_json(r.get("results")), pd.read_json(r.get("returns"))

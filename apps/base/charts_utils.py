@@ -265,8 +265,12 @@ class Chart():
             yaxis={'showgrid':False, 'zeroline':False, 'showticklabels': False},
             shapes=shapes,
             annotations=annotations,
-            hovermode='closest'
+            hovermode='closest',
+            hoverdistance=-1
+            
         )
+
+        self.fig = go.FigureWidget(self.fig)
             
     def get_chart(self):
         return self.fig

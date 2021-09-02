@@ -4,8 +4,8 @@ class StrategiesAPI():
     def __init__(self):
         self.strategy = None
         self.params = None
-        # self.base_url = "http://127.0.0.1:5000/"
-        self.base_url = "https://strategies-api-ibyah76s5q-lz.a.run.app/"
+        self.base_url = "http://127.0.0.1:5000/"
+        # self.base_url = "https://strategies-api-ibyah76s5q-lz.a.run.app/"
     
     @staticmethod
     def _build_content(strategy_name, assets):

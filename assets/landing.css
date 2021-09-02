@@ -2,9 +2,9 @@
     
 }
 
-.modebar{
+/* .modebar{
     display: none !important;
-}
+} */
 
 #landing-selection{
     margin: auto;
@@ -36,12 +36,18 @@
     width:100%
 }
 
+div.js-plotly-plot > div > div > svg:nth-child(1) > g.draglayer{
+    cursor: pointer;
+}
+
 .ticker-trend {
     width:49%;
+    height:auto;
 }
 
 .tag-trend{
     width:49%;
+    height:auto;
 }
 
 /* .ticker-trend div.js-plotly-plot{
