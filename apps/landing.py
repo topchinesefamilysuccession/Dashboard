@@ -1,21 +1,39 @@
+from logging import PercentStyle
 import dash_core_components as dcc
 from dash_core_components.Loading import Loading
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 from dash_html_components.Div import Div
+from numpy.lib.arraypad import _as_pairs
 from .base.fred_utils import FredHandler
 from .base.charts_utils import Chart, init_chart
 from .base.api_handler import StrategiesAPI
 from .base.trend_utils import TrendsMaster
 import dash_table
-from .base.general_utils import get_all_xtb_assets
+from dash import no_update
+from .base.general_utils import get_all_xtb_assets, get_ETF_from_component
 import pandas as pd
 from app import app
 from datetime import datetime
 
 df = get_all_xtb_assets()
 tm = TrendsMaster()
+
+def getTickerTreeMap():
+    ticker_treemap_data = tm.getTickerTrends()
+    ticker_treemap = Chart('Trend Chart')
+    ticker_treemap.getTrendMap(ticker_treemap_data)
+    return ticker_treemap.get_chart()
+
+def getTagTreeMap():
+    tag_treemap_data = tm.getTagTrends()
+    tag_treemap = Chart('Trend Chart')
+    tag_treemap.getTrendMap(tag_treemap_data)
+    return tag_treemap.get_chart()
+
+tickerTreeMap = getTickerTreeMap()
+tagTreeMap = getTagTreeMap()
 
 list_of_assets = df["keywords"].unique()
 
@@ -63,10 +81,20 @@ layout = html.Div([
         dcc.Loading(children=[
             html.Div([
                 html.Div([
-                    dcc.Graph(id='ticker-treemap'),
+                    dcc.Graph(figure=tickerTreeMap,
+                                config={
+                                    'displayModeBar':False
+                                },
+                                clear_on_unhover = True,
+                    id='ticker_graph'),
                 ], className='ticker-trend'),
                 html.Div([
-                    dcc.Graph(id='tag-treemap'),
+                    dcc.Graph(figure=tagTreeMap,
+                                config={
+                                    'displayModeBar':False
+                                },
+                                clear_on_unhover=True,
+                    id='tag_graph'),
                 ], className='tag-trend'),
             ], className='trend-graphs-container')
         ])
@@ -79,18 +107,24 @@ layout = html.Div([
     [
         Output("landing-selection", "value"), 
         Output("suggestions", "options"), 
-        Output("suggestions", "value"), 
-        Output("ticker-treemap","figure"), 
-        Output("tag-treemap","figure")
+        Output("suggestions", "value")
     ],
-    [Input("suggestions", "value"), Input("landing-selection", "value")], 
+    [Input("suggestions", "value"), Input("landing-selection", "value"),Input('ticker_graph','clickData')], 
     [State("landing-selection", "options"), State("suggestions", "options")]
 )
-def update_list(suggestion_values, selected_value, landing_options, suggestions_options):
+def update_list(suggestion_values, selected_value, ticker_clickData,
+                landing_options, suggestions_options):
 
     if selected_value is None:
         selected_value = []
-        
+    
+    if ticker_clickData is not None:
+        # print(ticker_clickData)
+        # print(ticker_clickData['points'][0]['text'])
+        etfs = get_ETF_from_component(ticker_clickData['points'][0]['text'])
+        # print(f'ETFs that matched the componenet: {etfs}')
+        selected_value = list(df[df.symbol.isin(etfs)]['keywords'])
+
     #Which values were selected ?
     keywords_full_list = [list(d.values())[0] for d in suggestions_options]
     suggestion_values_selected = [v for v in keywords_full_list if v not in suggestion_values]
@@ -99,27 +133,14 @@ def update_list(suggestion_values, selected_value, landing_options, suggestions_
     #Suggestions and already selected values
     updated_selected_values = list(set(selected_value + suggestion_values_selected))
 
-
     #Update suggestion values and options
     all_keywords = [list(d.values())[0] for d in landing_options]
     updated_suggestion_values = [v for v in all_keywords if v not in updated_selected_values]
     suggested_options = [{"label": v, "value":v} for v in updated_suggestion_values]
 
-    ticker_treemap_data = tm.getTickerTrends()
-    ticker_treemap = Chart('Trend Chart')
-    ticker_treemap.getTrendMap(ticker_treemap_data)
-
-    tag_treemap_data = tm.getTagTrends()
-    tag_treemap = Chart('Trend Chart')
-    tag_treemap.getTrendMap(tag_treemap_data)
-
     return updated_selected_values, \
             suggested_options, \
-            updated_suggestion_values, \
-            ticker_treemap.get_chart(), \
-            tag_treemap.get_chart()
-    
-
+            updated_suggestion_values
 
 @app.callback(
     Output("suggestions-id", "style"), 
@@ -130,6 +151,19 @@ def show_hide_suggestions(toggle_value):
     if toggle_value is None or toggle_value == []:
         return {"display":"none"}
     return {"display":"flex"}
+
+# @app.callback(
+#     Output('ticker_graph','figure'),
+#     [Input('ticker_graph','hoverData')]
+# )
+
+# def trendHoverkHandle(hoverData):
+#     # print(hoverData)
+#     for shape in tickerTreeMap['layout']['shapes']:
+#         shape['line']['color'] = '#ffffff'
+#     if hoverData:
+#         tickerTreeMap['layout']['shapes'][hoverData['points'][0]['pointIndex']]['line']['color'] = '#000000' 
+#     return tickerTreeMap
 
 
 @app.callback(
