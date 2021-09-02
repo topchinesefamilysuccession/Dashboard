@@ -7,3 +7,4 @@ apps/base/custom_libraries/config.py
 apps/base/custom_libraries/__pycache__
 google_key.json
 credentials.py
+*.csv

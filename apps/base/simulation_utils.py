@@ -25,6 +25,7 @@ class Simulation():
         else:
             self.status = 400
             return None
+    
 
 # assets = ['FXE.US_5'] 
  

@@ -272,5 +272,8 @@ class Chart():
 
         self.fig = go.FigureWidget(self.fig)
             
+    def draw_simulation(self, df, name, color):
+        self.fig.add_trace(go.Scatter(mode="lines",x=df.index.strftime("%Y/%m/%d"), y=df, name=name, line={"color":color}))
+
     def get_chart(self):
         return self.fig
