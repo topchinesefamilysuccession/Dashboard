@@ -7,7 +7,7 @@ from dash.exceptions import PreventUpdate
 import os
 
 from app import app 
-from apps import backtesting, allocations, market, strategies, sentiment, macro, landing
+from apps import backtesting, allocations, market, strategies, sentiment, macro, landing, technical
 
 # image_filename = 'img/logo2_circle.png' # replace with your own image
 # encoded_image = base64.b64encode(open(image_filename, 'rb').read())
@@ -98,6 +98,8 @@ def display_page(pathname, data):
         return strategies.load_strategy(data)
     elif pathname == "/apps/landing":
         return landing.layout
+    elif pathname == "/admin":
+        return technical.layout
     else:
         return landing.layout
 
@@ -106,5 +108,10 @@ def display_page(pathname, data):
 server = app.server
 
 if __name__ == "__main__":
+    # from waitress import serve
     # app.run_server(debug=True, host='0.0.0.0', port=int(os.environ.get('PORT',8080)))
-    app.run_server(debug=True,port=int(os.environ.get('PORT',8080)))
+    app.run_server(debug=True,
+                    use_reloader=False,
+                    dev_tools_hot_reload = True,
+                    port=int(os.environ.get('PORT',8080)))
+    # serve(app,host='0.0.0.0',port=int(os.environ.get('PORT',8080)))

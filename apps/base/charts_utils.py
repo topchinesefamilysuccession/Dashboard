@@ -7,6 +7,7 @@ import datetime
 import squarify
 import matplotlib
 import matplotlib.cm
+from matplotlib.colors import LinearSegmentedColormap
 
 
 bars_colors = ["#413c69", "#4a47a3", "#709fb0", "#a7c5eb", "#c6ffc1"]
@@ -248,22 +249,16 @@ class Chart():
                                 xaxis_range=[df.index.min(),df.index.max()+bin_size],
                                 yaxis=dict(tickformat='.0%'))
 
-    def getTrendMap(self, df):
+    def getTrendMap(self, df, labels_column, size_column, colors_column):
 
-        values = df.news_count.to_list()
-        labels = [x.upper() for x in df.keyword.to_list()]
+        values = df[size_column].to_list()
+        labels = [x.upper() for x in df[labels_column].to_list()]
 
-        norm = matplotlib.colors.Normalize(vmin=0,vmax=1.3)
+        norm = matplotlib.colors.Normalize(vmin=-1,vmax=1)
 
-        cmapReds=matplotlib.cm.Reds
-        cmapGreens = matplotlib.cm.Greens
+        cmap=LinearSegmentedColormap.from_list('rg',["r", "w", "g"], N=256)
 
-        colors = []
-        for index, row in df.iterrows():
-            if row['title_negative_count'] > row['title_positive_count']:
-                colors.append(matplotlib.colors.to_hex(cmapReds(norm(row['title_negative_score']))))
-            else:
-                colors.append(matplotlib.colors.to_hex(cmapGreens(norm(row['title_positive_score']))))
+        colors = [matplotlib.colors.to_hex(cmap(norm(x))) for x in df[colors_column]]
 
         x = 0
         y = 0
@@ -321,6 +316,8 @@ class Chart():
             
         )
 
+        ## self.fig = go.FigureWidget(self.fig)
+            
     def draw_simulation(self, df, name, color):
         self.fig.add_trace(go.Scatter(mode="lines",x=df.index.strftime("%Y/%m/%d"), y=df, name=name, line={"color":color}))
 

@@ -13,23 +13,28 @@ from .base.trend_utils import TrendsMaster
 import dash_table
 from dash import no_update
 from .base.general_utils import get_all_xtb_assets, get_ETF_from_component
+from .base.recession_indicator_utils import getGaugeSubplotsFig, getListOfFactorGroups
 import pandas as pd
 from app import app
 from datetime import datetime
 
 df = get_all_xtb_assets()
 tm = TrendsMaster()
+factor_groups = getListOfFactorGroups()
 
 def getTickerTreeMap():
     ticker_treemap_data = tm.getTickerTrends()
     ticker_treemap = Chart('Trend Chart')
-    ticker_treemap.getTrendMap(ticker_treemap_data)
+    """SENTIMENT INVESTOR"""
+    # ticker_treemap.getTrendMap(ticker_treemap_data,'ticker','mentions','sentiment')
+    """"""
+    ticker_treemap.getTrendMap(ticker_treemap_data,'keyword','news_count','title_aggregate_score')
     return ticker_treemap.get_chart()
 
 def getTagTreeMap():
     tag_treemap_data = tm.getTagTrends()
     tag_treemap = Chart('Trend Chart')
-    tag_treemap.getTrendMap(tag_treemap_data)
+    tag_treemap.getTrendMap(tag_treemap_data,'keyword','news_count','title_aggregate_score')
     return tag_treemap.get_chart()
 
 tickerTreeMap = getTickerTreeMap()
@@ -75,7 +80,7 @@ layout = html.Div([
 
     html.Div([
         html.Div([
-            html.H3('Daily Top Trends'),
+            html.H3('Daily Sentiment Top Trends'),
             html.P(datetime.today().date().strftime("%d %B %Y"))
         ], className='trends-title'),
         dcc.Loading(children=[
@@ -86,7 +91,8 @@ layout = html.Div([
                                     'displayModeBar':False
                                 },
                                 clear_on_unhover = True,
-                    id='ticker_graph'),
+                    id='ticker_graph',
+                    responsive=True),
                 ], className='ticker-trend'),
                 html.Div([
                     dcc.Graph(figure=tagTreeMap,
@@ -94,11 +100,33 @@ layout = html.Div([
                                     'displayModeBar':False
                                 },
                                 clear_on_unhover=True,
-                    id='tag_graph'),
+                    id='tag_graph',
+                    responsive=True),
                 ], className='tag-trend'),
             ], className='trend-graphs-container')
         ])
-    ], className='sentiment-trends')
+    ], className='sentiment-trends'),
+    html.Div([
+        html.Div([
+            html.H3('Recession Indicator')
+        ], className='recession-indicator-title'),
+        dcc.Loading(children=[
+            html.Div([
+                html.Div(children=[
+                    html.Div(html.Span(x),className='fg-btn') for x in factor_groups
+                ], className='factor-groups-container'),
+                html.Div([
+                    html.H4('Probability of US Recession within')]),
+                html.Div([
+                    dcc.Graph(
+                        figure=getGaugeSubplotsFig(),
+                        id='gauge_fig',
+                        responsive=True,
+                    )
+                ])
+            ])
+        ])
+    ], className='recession-model-container')
             
         
 ], className="landing-content")
