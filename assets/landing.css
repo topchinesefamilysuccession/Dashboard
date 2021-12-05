@@ -12,7 +12,7 @@
 }
 
 .search-bar{
-    width:60%;
+    width:70%;
     margin:auto;
     padding-top:3%;
 }
@@ -107,4 +107,48 @@ div.js-plotly-plot > div > div > svg:nth-child(1) > g.draglayer{
     align-self: center;
     margin-left: 6px;
 }
+
+/*
+RECESSION MODEL TAGS
+*/
+
+.recession-model-container{
+    width:70%;
+    margin: auto;
+    padding-top: 3%;
+}
+
+.recession-indicator-title{
+    text-align: center;
+}
+
+#gauge_fig {
+    height: 15vw;
+}
+
+.factor-groups-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.fg-btn{
+    border: 0px solid;
+    border-radius: 5px;
+    height: 2vw;
+    width: 15%;
+    margin-right: 10px;
+    text-align: center;
+    padding:auto;
+    background-color:#424242;
+    color:#edf0f1;
+}
+
+.fg-btn:hover{
+    background-color:#1d1d1d;
+}
+
+
+
+
 
