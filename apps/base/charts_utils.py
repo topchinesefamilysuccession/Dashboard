@@ -4,6 +4,11 @@ from plotly.subplots import make_subplots
 import pandas as pd
 import time
 import datetime
+import squarify
+import matplotlib
+import matplotlib.cm
+from matplotlib.colors import LinearSegmentedColormap
+
 
 bars_colors = ["#413c69", "#4a47a3", "#709fb0", "#a7c5eb", "#c6ffc1"]
 # pie_colors = ["#003f5c","#2f4b7c","#665191","#a05195","#d45087","#f95d6a","#ff7c43","#ffa600"]
@@ -56,6 +61,12 @@ general_chart_layout = {
                                 "yaxis":{"title":"Values"},
                                 "autosize":True
                                 }
+trend_chart_layout = {
+                                "paper_bgcolor" : "rgba(0,0,0,0)",
+                                "plot_bgcolor" : "rgba(0,0,0,0)",
+                                "autosize":True,
+                                "margin":{"t":10,"b":0,"l":0,"r":0}
+}
 
 
 charts_layouts = {
@@ -63,7 +74,8 @@ charts_layouts = {
     "Pie Chart" : pie_chart_layout,
     "Bar Chart" : bar_chart_layout,
     "Sentiment": sentiment_chart_layout,
-    "General":general_chart_layout
+    "General":general_chart_layout,
+    "Trend Chart":trend_chart_layout
 }
 
 
@@ -80,7 +92,6 @@ def init_chart():
     return fig
 
 
-
 class Chart():
     def __init__(self, chart_name, multiple_axes=False):
         self.chart_name=chart_name
@@ -92,7 +103,18 @@ class Chart():
         self.fig.update_layout(chart_layout)
     
     def draw_portfolio_value(self, df, name):
-        self.fig.add_trace(go.Scatter(mode="lines",x=df["date"], y=df["prt_value"], name=name))
+        if name == "Portfolio Value":
+            hover_dict = {}
+            for idx, row in df.iterrows():
+                p = row[[c for c in row.index.values if c not in ["date"]]]
+                p.sort_values(ascending=False, inplace=True, key=abs)
+                hover_dict.update({row["date"]: p.head(6).to_dict()})
+            text = ["<br>".join([f"<i>{k2}: {(v2*100):.2f}%</i>" if k2 !="prt_value" else f"<b>Portfolio Value: {v2:,.0f}$<b><br>" for k2,v2 in v.items()]) for k,v in hover_dict.items()]
+        else:
+            text = [f"{name}"]
+        
+        self.fig.add_trace(go.Scatter(mode="lines",x=df["date"], y=df["prt_value"], name='', text = text, hovertemplate="<b>%{text}</b>"))
+
         
     def draw_df(self, df, name, x_name, y_name):
         self.fig.add_trace(go.Scatter(mode="lines",x=df[x_name], y=df[y_name], name=name))
@@ -226,6 +248,78 @@ class Chart():
                                     x=1.12),
                                 xaxis_range=[df.index.min(),df.index.max()+bin_size],
                                 yaxis=dict(tickformat='.0%'))
+
+    def getTrendMap(self, df, labels_column, size_column, colors_column):
+
+        values = df[size_column].to_list()
+        labels = [x.upper() for x in df[labels_column].to_list()]
+
+        norm = matplotlib.colors.Normalize(vmin=-1,vmax=1)
+
+        cmap=LinearSegmentedColormap.from_list('rg',["r", "w", "g"], N=256)
+
+        colors = [matplotlib.colors.to_hex(cmap(norm(x))) for x in df[colors_column]]
+
+        x = 0
+        y = 0
+        width = 100
+        height = 100
+
+        normed = squarify.normalize_sizes(values, width, height)
+        rects = squarify.squarify(normed, x, y, width, height)
+
+        shapes = []
+        annotations = []
+
+        for r, color, text in zip(rects, colors, labels):
+            shapes.append( 
+                dict(
+                    type = 'rect', 
+                    x0 = r['x'], 
+                    y0 = r['y'], 
+                    x1 = r['x']+r['dx'], 
+                    y1 = r['y']+r['dy'],
+                    line = dict( width = 2, color = '#ffffff' ),
+                    fillcolor = color
+                ) 
+            )
+            annotations.append(
+                dict(
+                    x = r['x']+(r['dx']/2),
+                    y = r['y']+(r['dy']/2),
+                    text = text.replace(' ','<br>'),
+                    showarrow = False,
+                    font=dict(
+                        size=14,
+                        color="#ffffff"
+                        )
+                )
+            )
+        
+        self.fig.add_trace(go.Scatter(
+                    x = [ r['x']+(r['dx']/2) for r in rects ], 
+                    y = [ r['y']+(r['dy']/2) for r in rects ],
+                    text = labels, 
+                    mode = 'text'
+                    # textfont = dict(color="#ffffff", size=14)
+                )
+            )
+        # self.fig.add_annotation(annotations)      
+        self.fig.update_layout(
+            autosize=True,
+            xaxis={'showgrid':False, 'zeroline':False, 'showticklabels': False},
+            yaxis={'showgrid':False, 'zeroline':False, 'showticklabels': False},
+            shapes=shapes,
+            annotations=annotations,
+            hovermode='closest',
+            hoverdistance=-1
+            
+        )
+
+        ## self.fig = go.FigureWidget(self.fig)
+            
+    def draw_simulation(self, df, name, color):
+        self.fig.add_trace(go.Scatter(mode="lines",x=df.index.strftime("%Y/%m/%d"), y=df, name=name, line={"color":color}))
 
     def get_chart(self):
         return self.fig

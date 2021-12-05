@@ -1,0 +1,154 @@
+.landing-content{
+    
+}
+
+/* .modebar{
+    display: none !important;
+} */
+
+#landing-selection{
+    margin: auto;
+    margin-bottom: 6px;
+}
+
+.search-bar{
+    width:70%;
+    margin:auto;
+    padding-top:3%;
+}
+
+.trends-title{
+    text-align: center;
+}
+
+.trends-title p {
+    color: grey;
+}
+
+.sentiment-trends{
+    width:70%;
+    margin: auto;
+}
+
+.trend-graphs-container {
+    display: flex;
+    justify-content:space-between;
+    width:100%
+}
+
+div.js-plotly-plot > div > div > svg:nth-child(1) > g.draglayer{
+    cursor: pointer;
+}
+
+.ticker-trend {
+    width:49%;
+    height:auto;
+}
+
+.tag-trend{
+    width:49%;
+    height:auto;
+}
+
+/* .ticker-trend div.js-plotly-plot{
+    width:100% !important;
+}
+
+.tag-trend  div.js-plotly-plot{
+    width:100% !important;
+} */
+
+#go-btn{
+    margin-top: 10px;
+    float: right;
+    width: 8vw;
+    padding:9px 25px;
+    border:none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease 0s;
+    background-color: rgba(0,136,169,1);
+    color:#edf0f1;
+}
+
+#go-btn:hover{
+    background-color: rgba(0,136,169,0.8);
+    align-self: center;
+    margin-right: 6px;
+}
+
+#suggestions-id {
+    display: none;
+    margin-top: 2%
+}
+
+.suggestions-div .Select-control{
+    background-color: #f2f2f2;
+    border: none;
+    
+}
+.suggestions-div .Select-clear-zone{
+    display: none;
+}
+
+.suggestions-div .Select-arrow-zone{
+    display: None;
+}
+
+.landing-controls-div{
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+
+#suggestions-toggle{
+    align-self: center;
+    margin-left: 6px;
+}
+
+/*
+RECESSION MODEL TAGS
+*/
+
+.recession-model-container{
+    width:70%;
+    margin: auto;
+    padding-top: 3%;
+}
+
+.recession-indicator-title{
+    text-align: center;
+}
+
+#gauge_fig {
+    height: 15vw;
+}
+
+.factor-groups-container{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.fg-btn{
+    border: 0px solid;
+    border-radius: 5px;
+    height: 2vw;
+    width: 15%;
+    margin-right: 10px;
+    text-align: center;
+    padding:auto;
+    background-color:#424242;
+    color:#edf0f1;
+}
+
+.fg-btn:hover{
+    background-color:#1d1d1d;
+}
+
+
+
+
+

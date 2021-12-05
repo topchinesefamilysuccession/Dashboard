@@ -5,6 +5,4 @@ __pycache__
 .vscode
 apps/base/custom_libraries/config.py
 apps/base/custom_libraries/__pycache__
-credentials.json
-news_files
-tmp
+*.csv
