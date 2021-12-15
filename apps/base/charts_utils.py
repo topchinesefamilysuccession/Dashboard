@@ -198,17 +198,24 @@ class Chart():
                     x=1.12
                 ))
 
+    def _calculateFontSizes(self, base_var, max_font_size, min_font_size):
+        list_of_font_sizes = []
+        base_max = max(base_var)
+        base_min = min(base_var)
+        for x in base_var:
+            y = round(((x - base_min)/(base_max - base_min)) * (max_font_size - min_font_size) + min_font_size,0)
+            list_of_font_sizes.append(y)
+        return list_of_font_sizes
+
     def getTrendMap(self, df, labels_column, size_column, colors_column):
 
         values = df[size_column].to_list()
-        labels = [x.upper() for x in df[labels_column].to_list()]
+        labels = df[labels_column].to_list()
 
-        norm = matplotlib.colors.Normalize(vmin=-1,vmax=1)
-
-        cmap=LinearSegmentedColormap.from_list('rg',["r", "w", "g"], N=256)
-
-        colors = [matplotlib.colors.to_hex(cmap(norm(x))) for x in df[colors_column]]
-
+        # norm = matplotlib.colors.Normalize(vmin=-1,vmax=1)
+        # cmap=LinearSegmentedColormap.from_list('rg',["r", "w", "g"], N=256)
+        # colors = [matplotlib.colors.to_hex(cmap(norm(x))) for x in df[colors_column]]
+        
         x = 0
         y = 0
         width = 100
@@ -217,10 +224,17 @@ class Chart():
         normed = squarify.normalize_sizes(values, width, height)
         rects = squarify.squarify(normed, x, y, width, height)
 
+        rect_font_sizes = self._calculateFontSizes(values,32,12)
+        
         shapes = []
         annotations = []
 
-        for r, color, text in zip(rects, colors, labels):
+        for r, text, sent, rec_f_size in zip(rects, labels, df[colors_column].to_list(),rect_font_sizes):
+            
+            rect_fill_color = f'rgba(0,178,118,{round(abs(sent),2)})'
+            if sent < 0:
+                rect_fill_color = f'rgba(229,57,53,{round(abs(sent),2)})'
+            
             shapes.append( 
                 dict(
                     type = 'rect', 
@@ -229,9 +243,12 @@ class Chart():
                     x1 = r['x']+r['dx'], 
                     y1 = r['y']+r['dy'],
                     line = dict( width = 2, color = '#ffffff' ),
-                    fillcolor = color
+                    fillcolor = rect_fill_color
                 ) 
             )
+            rect_font_color = '#ffffff'
+            if abs(sent) < 0.7:
+                rect_font_color = "#000000"
             annotations.append(
                 dict(
                     x = r['x']+(r['dx']/2),
@@ -239,8 +256,8 @@ class Chart():
                     text = text.replace(' ','<br>'),
                     showarrow = False,
                     font=dict(
-                        size=14,
-                        color="#ffffff"
+                        size=rec_f_size,
+                        color=rect_font_color
                         )
                 )
             )
@@ -248,8 +265,10 @@ class Chart():
         self.fig.add_trace(go.Scatter(
                     x = [ r['x']+(r['dx']/2) for r in rects ], 
                     y = [ r['y']+(r['dy']/2) for r in rects ],
-                    text = labels, 
-                    mode = 'text'
+                    # text = labels, 
+                    mode = 'text',
+                    customdata = df[['keyword','news_count','aggregate_score']],
+                    hovertemplate ='%{customdata[0]} <br></br>Number mentions of news: %{customdata[1]} <br></br>Aggregate sentiment score: %{customdata[2]}<extra></extra>'
                     # textfont = dict(color="#ffffff", size=14)
                 )
             )
@@ -261,7 +280,7 @@ class Chart():
             shapes=shapes,
             annotations=annotations,
             hovermode='closest',
-            hoverdistance=-1
+            hoverdistance=-1,
             
         )
 

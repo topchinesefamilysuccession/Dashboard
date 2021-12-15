@@ -33,7 +33,10 @@ class TrendsMaster():
         print('Initiate trend master!')
         self.trend_collection = self.__connectDB()
         self.tag_stop_words = set([
-            'tiingo_top','stock','unknown_sector','ap','general'
+            'tiingo_top','stock','unknown_sector','ap','general',
+            'etf','stocks','news','fx','reu','south','west','east',
+            'review','upgrade','southwest','us','nation','standard','world',
+
         ])
         self.db = myMongo('etf')
 
@@ -53,15 +56,16 @@ class TrendsMaster():
 
     def getTickerTrends(self, top_number=27):
         # Get list of supported tickers from MongoDB
-        components_collection = self.db.db['etf_components_etfdb']
-        tickers = pd.DataFrame(list(components_collection.find({'sent_investor_supp':True},{"_id":0,"Symbol":1})))
-        tickers.columns = ['ticker']
-        tickers.drop_duplicates(inplace=True)
-        tickers['sentiment'] = None
-        tickers['mentions'] = None
-        tickers.reset_index(inplace=True,drop=True)
-
         """SENTIMENT INVESTOR"""
+        # components_collection = self.db.db['etf_components_etfdb']
+        # tickers = pd.DataFrame(list(components_collection.find({'sent_investor_supp':True},{"_id":0,"Symbol":1})))
+        # tickers.columns = ['ticker']
+        # tickers.drop_duplicates(inplace=True)
+        # tickers['sentiment'] = None
+        # tickers['mentions'] = None
+        # tickers.reset_index(inplace=True,drop=True)
+
+        
         # sent_data = get_sentiment_bulk(tickers.ticker.to_list())
         # # print('Sentiments df')
         # # print(sent_data)
@@ -73,8 +77,8 @@ class TrendsMaster():
         """SENTIMENT INVESTOR"""
 
         """ FIRESTORE SETUP """
-        todays_date = datetime.today().date().strftime("%d-%m-%Y")
-        # todays_date = '14-08-2021'
+        # todays_date = datetime.today().date().strftime("%d-%m-%Y")
+        todays_date = '12-12-2021'
 
         query_ref = self.trend_collection.where(u'date',u'==',todays_date).where(u'type',u'==',u'ticker').stream()
         tickers = []
@@ -98,16 +102,18 @@ class TrendsMaster():
         self.db.close_connection()
 
         tickers = pd.DataFrame(tickers, columns=['keyword','title_positive_score','title_negative_count','title_positive_count','title_negative_score','news_count','title_aggregate_score'])
+        tickers['aggregate_score'] = round((tickers.title_positive_score * tickers.title_positive_count - tickers.title_negative_count * tickers.title_negative_score) / (tickers.news_count),2)
         tickers.sort_values(by=['news_count'], ascending=False, inplace=True)
         """ FIRESTORE SETUP """
 
         tickers = tickers.iloc[:top_number]
+        tickers['keyword'] = [x.upper() for x in tickers['keyword']]
         # print(tickers)
         return tickers
 
     def getTagTrends(self, top_number=27):
-        todays_date = datetime.today().date().strftime("%d-%m-%Y")
-        # todays_date = '14-08-2021'
+        # todays_date = datetime.today().date().strftime("%d-%m-%Y")
+        todays_date = '12-12-2021'
 
         query_ref = self.trend_collection.where(u'date',u'==',todays_date).where(u'type',u'==',u'tag').stream()
         tickers = []
@@ -127,8 +133,10 @@ class TrendsMaster():
                 ])
         
         tickers = pd.DataFrame(tickers, columns=['keyword','title_positive_score','title_negative_count','title_positive_count','title_negative_score','news_count','title_aggregate_score'])
+        tickers['aggregate_score'] = round((tickers.title_positive_score * tickers.title_positive_count - tickers.title_negative_count * tickers.title_negative_score) / (tickers.news_count),2)
         tickers.sort_values(by=['news_count'], ascending=False, inplace=True)
         tickers = tickers.iloc[:top_number]
+        tickers['keyword'] = [x.capitalize() for x in tickers['keyword']]
         # print(tickers)
 
         return tickers

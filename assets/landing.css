@@ -120,34 +120,177 @@ RECESSION MODEL TAGS
 
 .recession-indicator-title{
     text-align: center;
+    margin-bottom: 20px;
 }
 
-#gauge_fig {
-    height: 15vw;
-}
-
-.factor-groups-container{
+.recession-factors-container {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    width: 100%;
 }
 
-.fg-btn{
-    border: 0px solid;
-    border-radius: 5px;
-    height: 2vw;
-    width: 15%;
-    margin-right: 10px;
-    text-align: center;
-    padding:auto;
-    background-color:#424242;
+.fct-list-container {
+    width: 24%;
+    margin-right: 1%;
+    /* background-color: #fff; */
+    padding: 1%;
+}
+
+.recession-charts-container {
+    width: 75%;
+    /* background-color: #fff; */
+    padding: 1%;
+}
+
+.fct-btns-container {
+    display:flex;
+    flex-direction: row;
+}
+
+.btns-general {
+    white-space: nowrap;
+    height: 40px;
+    width: 120px;
+    margin-top: 5px;
+    margin-right: 5px;
+    padding:9px 15px;
+    border:none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease 0s;
+    background-color: rgba(0,136,169,1);
     color:#edf0f1;
 }
 
-.fg-btn:hover{
-    background-color:#1d1d1d;
+.btns-general:hover {
+    background-color: rgba(0,136,169,0.8);
+    margin-top: 2px;
+    margin-bottom: 3px;
 }
 
+.btn-selectall-container {
+    /* float: left; */
+}
+
+.btn-rebuild-container {
+    /* float: left; */
+}
+
+#factor-checklist {
+    padding-top: 10px;
+}
+
+.fg-item {
+    margin-left: 5px;
+}
+
+.rec-charts {
+    width: 100%;
+    height: 50vh;
+    display: flex;
+    flex-direction: row;
+}
+
+.rec-trend-chart {
+    width: 83%;
+    margin-right: 2%;
+}
+.rec-trend-chart > div {
+    height: 100%;
+}
+
+.gauge-fig-container{
+    width: 15%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.gauge-fig {
+    height: 25%;
+    opacity: 0.85;
+    cursor: pointer;
+    transition: all 0.2s ease 0s;
+}
+
+.gauge-fig > div {
+    height:100%;
+}
+
+.gauge-fig:hover {
+    opacity: 1;
+}
+
+.fg-item {
+    /* background-color: #424242;
+    color:#edf0f1; */
+    display: block;
+    text-align: left;
+} 
+
+.largest-movers-container {
+    width: 100%; 
+    
+    display: flex;
+    flex-direction: column;
+}
+
+.lm-cards-container {
+    width: 100%;
+    padding-bottom: 10px;
+    padding-left: 5px;
+
+    display: flex;
+    flex-direction: row;
+
+    overflow-x: scroll;
+    overflow-y: hidden;
+}
+
+.lm-cards-container::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+.lm-cards-container::-webkit-scrollbar-track {
+    border-radius: 10px;
+    background: rgba(0,0,0,0.1);
+}
+.lm-cards-container::-webkit-scrollbar-thumb{
+    border-radius: 10px;
+    background: rgba(0,0,0,0.2);
+}
+.lm-cards-container::-webkit-scrollbar-thumb:hover{
+    background: rgba(0,0,0,0.4);
+}
+.lm-cards-container::-webkit-scrollbar-thumb:active{
+    background: rgba(0,0,0,.9);
+}
+
+.free-space{
+    width: 100%;
+    height: 100px;
+}
+
+
+.main-footer {
+    width: 100%;
+    height: 100px;
+
+    line-height: 100px;
+    text-align: center;
+
+    background-color: #24251A;
+    color:#edf0f1;
+}
+
+@media screen and (max-width: 1400px) {
+    .fct-btns-container {
+        display:flex;
+        flex-direction: column;
+    }
+
+
+}
 
 
 

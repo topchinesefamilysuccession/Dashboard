@@ -1,26 +1,20 @@
 from logging import PercentStyle
-import dash_core_components as dcc
-from dash_core_components.Loading import Loading
-import dash_html_components as html
+import dash
+from dash import dcc
+from dash import html
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
-from dash_html_components.Div import Div
-from numpy.lib.arraypad import _as_pairs
-from .base.fred_utils import FredHandler
 from .base.charts_utils import Chart, init_chart
 from .base.api_handler import StrategiesAPI
 from .base.trend_utils import TrendsMaster
-import dash_table
-from dash import no_update
 from .base.general_utils import get_all_xtb_assets, get_ETF_from_component
-from .base.recession_indicator_utils import getGaugeSubplotsFig, getListOfFactorGroups
+from .base.recession_indicator_utils import getGaugeSubplotsFig, getListOfFactorGroups, getGaugeListOfFigs, getRecessionHistGraph, getLMCards
 import pandas as pd
 from app import app
 from datetime import datetime
 
 df = get_all_xtb_assets()
 tm = TrendsMaster()
-factor_groups = getListOfFactorGroups()
 
 def getTickerTreeMap():
     ticker_treemap_data = tm.getTickerTrends()
@@ -28,19 +22,22 @@ def getTickerTreeMap():
     """SENTIMENT INVESTOR"""
     # ticker_treemap.getTrendMap(ticker_treemap_data,'ticker','mentions','sentiment')
     """"""
-    ticker_treemap.getTrendMap(ticker_treemap_data,'keyword','news_count','title_aggregate_score')
+    ticker_treemap.getTrendMap(ticker_treemap_data,'keyword','news_count','aggregate_score')
     return ticker_treemap.get_chart()
 
 def getTagTreeMap():
     tag_treemap_data = tm.getTagTrends()
     tag_treemap = Chart('Trend Chart')
-    tag_treemap.getTrendMap(tag_treemap_data,'keyword','news_count','title_aggregate_score')
+    tag_treemap.getTrendMap(tag_treemap_data,'keyword','news_count','aggregate_score')
     return tag_treemap.get_chart()
 
 tickerTreeMap = getTickerTreeMap()
 tagTreeMap = getTagTreeMap()
 
 list_of_assets = df["keywords"].unique()
+
+factor_groups = getListOfFactorGroups()
+rebuild_btn = html.Button('Rebuild', id='btn-rebuild', className='btns-general')
 
 layout = html.Div([
     html.Div([
@@ -80,7 +77,7 @@ layout = html.Div([
 
     html.Div([
         html.Div([
-            html.H3('Daily Sentiment Top Trends'),
+            html.H2('Daily Sentiment Top Trends'),
             html.P(datetime.today().date().strftime("%d %B %Y"))
         ], className='trends-title'),
         dcc.Loading(children=[
@@ -108,27 +105,56 @@ layout = html.Div([
     ], className='sentiment-trends'),
     html.Div([
         html.Div([
-            html.H3('Recession Indicator')
+            html.H2('Recession Indicator')
         ], className='recession-indicator-title'),
         dcc.Loading(children=[
             html.Div([
-                html.Div(children=[
-                    html.Div(html.Span(x),className='fg-btn') for x in factor_groups
-                ], className='factor-groups-container'),
                 html.Div([
-                    html.H4('Probability of US Recession within')]),
+                    html.H4('Factors used in a model'),
+                    html.Div(children=[
+                        html.Div([
+                            html.Div([
+                                html.Button('Unselect all', id='btn-selectall-factors', className='btns-general')
+                            ],id='btn-selectall-container'),
+                            html.Div(id='btn-rebuild-container'),
+                        ], className='fct-btns-container'),
+                        dcc.Checklist(
+                            options=[{'label':x, 'value':x} for x in factor_groups],
+                            value=factor_groups,
+                            labelClassName="fg-item",
+                            id='factor-checklist'
+                        )
+                    ])
+                ], className='fct-list-container'),
                 html.Div([
-                    dcc.Graph(
-                        figure=getGaugeSubplotsFig(),
-                        id='gauge_fig',
-                        responsive=True,
-                    )
-                ])
-            ])
+                    html.Div([
+                        html.H4('Probability of US recession within 3M')]),
+                    html.Div([
+                        html.Div([
+                            dcc.Graph(figure=getRecessionHistGraph(), responsive=True)
+                        ],className='rec-trend-chart'),
+                        html.Div(children=[
+                            html.Div([
+                            dcc.Graph(
+                                figure=fig,
+                                config={
+                                    'displayModeBar':False
+                                },
+                                responsive=True,
+                            )],className="gauge-fig") for fig in getGaugeListOfFigs()], className="gauge-fig-container")
+                        ], className='rec-charts')
+                ], className='recession-charts-container')
+            ], className='recession-factors-container'),
+            html.Div([
+                html.H4('Largest movers'),
+                html.Div(children=getLMCards(), className='lm-cards-container')
+            ], className='largest-movers-container')
         ])
-    ], className='recession-model-container')
-            
-        
+    ], className='recession-model-container'),
+    html.Div(className='free-space'),
+    html.Div([
+        html.P('Created by TCFS amazing dev team ' + u"\u00AE")
+    ], className='main-footer')
 ], className="landing-content")
 
 @app.callback(
@@ -169,6 +195,49 @@ def update_list(suggestion_values, selected_value, ticker_clickData,
     return updated_selected_values, \
             suggested_options, \
             updated_suggestion_values
+
+@app.callback(
+    [
+        Output('btn-rebuild-container','children'),
+        Output('btn-selectall-factors','children'), 
+        Output("factor-checklist","value")
+    ],
+    [
+        Input('factor-checklist','value'),
+        Input('btn-selectall-factors','n_clicks')
+    ],
+    [
+        State('btn-selectall-factors','children'),
+        State('factor-checklist','options')
+    ]
+)
+
+def manageFactorChecklist(fct_chk_values,btn_selectall_clicks,
+                            btn_selectall_text, fct_checklist_options):
+
+    ctx = dash.callback_context
+    if not ctx.triggered:
+        button_id = 'No clicks'
+    else:
+        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+
+    all_options = [x['value'] for x in fct_checklist_options]
+    if button_id == 'btn-selectall-factors':
+        if btn_selectall_text[0] == 'Select all':
+            if len(set(all_options) - set(factor_groups)):
+                return [rebuild_btn], ['Unselect all'], all_options
+            else:
+                return [html.Div()], ['Unselect all'], all_options
+        else:
+            return [html.Div()], ['Select all'], []
+    
+    if len(set(factor_groups) - set(fct_chk_values)):
+        return [rebuild_btn], ['Select all'], fct_chk_values
+    else:
+        return [html.Div()], ['Unselect all'], fct_chk_values
+
+
+
 
 @app.callback(
     Output("suggestions-id", "style"), 

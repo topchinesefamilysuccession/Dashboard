@@ -1,10 +1,11 @@
-import dash_core_components as dcc
-import dash_html_components as html
+import dash
+from dash import dcc
+from dash import html
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 from .base.fred_utils import FredHandler
 from .base.charts_utils import Chart, init_chart
-import dash_table
+from dash import dash_table
 
 import pandas as pd
 
