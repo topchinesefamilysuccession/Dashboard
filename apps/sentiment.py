@@ -3,7 +3,7 @@ import dash_bootstrap_components as dbc
 from dash import html
 from dash.dependencies import Input, Output, ALL
 from dash.exceptions import PreventUpdate
-import lorem
+# import lorem
 
 import dash
 

@@ -1,5 +1,5 @@
-import dash_html_components as html
-from dash_table import FormatTemplate
+from dash import html
+from dash.dash_table import FormatTemplate
 from .custom_libraries.mongo_connections import myMongo
 
 
