@@ -70,17 +70,17 @@ def build_strategy_summary(stats, language="en"):
         dd_label = "最大下探"
         pv_label = "最终价值"
     
-    summary =  [html.P(children=[
-                    html.Strong(f"{pnl_label}: "),
-                    f"{pnl:,.2f} $"
+    summary =  [html.Div(children=[
+                                    html.Strong("PnL: "),
+                                    html.Span(f"${pnl:,.2f}")
+                                    ]),
+                html.Div(children=[
+                                    html.Strong("Max Drawdown: "),
+                                    html.Span(f"${max_dd:,.2f}")
                                 ]),
-                html.P(children=[
-                    html.Strong(f"{dd_label}: "),
-                    f"{max_dd:,.2f} $"
-                                ]),
-                html.P(children=[
-                    html.Strong(f"{pv_label}: "),
-                    f"{final_portfolio_value:,.2f} $"
+                html.Div(children=[
+                    html.Strong("Final Portfolio Value: "),
+                    html.Span(f"${final_portfolio_value:,.2f}")
                                 ]),
     
     ]

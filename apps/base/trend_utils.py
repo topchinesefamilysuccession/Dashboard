@@ -77,8 +77,8 @@ class TrendsMaster():
         """SENTIMENT INVESTOR"""
 
         """ FIRESTORE SETUP """
-        # todays_date = datetime.today().date().strftime("%d-%m-%Y")
-        todays_date = '12-12-2021'
+        todays_date = datetime.today().date().strftime("%d-%m-%Y")
+        # todays_date = '12-12-2021'
 
         query_ref = self.trend_collection.where(u'date',u'==',todays_date).where(u'type',u'==',u'ticker').stream()
         tickers = []
@@ -112,8 +112,8 @@ class TrendsMaster():
         return tickers
 
     def getTagTrends(self, top_number=27):
-        # todays_date = datetime.today().date().strftime("%d-%m-%Y")
-        todays_date = '12-12-2021'
+        todays_date = datetime.today().date().strftime("%d-%m-%Y")
+        # todays_date = '12-12-2021'
 
         query_ref = self.trend_collection.where(u'date',u'==',todays_date).where(u'type',u'==',u'tag').stream()
         tickers = []
