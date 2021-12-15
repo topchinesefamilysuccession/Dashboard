@@ -7,7 +7,7 @@ from dash.exceptions import PreventUpdate
 import dash_bootstrap_components as dbc
 
 
-import dash_table
+from dash import dash_table
 import pandas as pd
 
 from .base.strategies_utils import Strategies
@@ -16,7 +16,6 @@ from .base.charts_utils import Chart, init_chart
 from .base.general_utils import get_all_xtb_assets
 
 from app import app
-import json
 
 import plotly.express as px
 

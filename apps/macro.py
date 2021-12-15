@@ -1,8 +1,8 @@
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc
+from dash import html
 from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
-import dash_table
+from dash import dash_table
 from .base.macro_utils import MacroTable
 from .base.mappings.macro_tables_mapping import get_tables_mapping
 from app import app
