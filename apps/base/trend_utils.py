@@ -30,7 +30,7 @@ def get_sentiment_bulk(list_of_tickers):
 
 class TrendsMaster():
     def __init__(self):
-        print('Initiate trend master!')
+        print('Initiate trend master')
         self.trend_collection = self.__connectDB()
         self.tag_stop_words = set([
             'tiingo_top','stock','unknown_sector','ap','general',
@@ -77,10 +77,10 @@ class TrendsMaster():
         """SENTIMENT INVESTOR"""
 
         """ FIRESTORE SETUP """
-        todays_date = datetime.today().date().strftime("%d-%m-%Y")
-        # todays_date = '12-12-2021'
+        # todays_date = datetime.today().date().strftime("%d-%m-%Y")
+        todays_date = '15-12-2021'
 
-        query_ref = self.trend_collection.where(u'date',u'==',todays_date).where(u'type',u'==',u'ticker').stream()
+        query_ref = self.trend_collection.where(u'date',u'==',todays_date).where(u'type',u'==',u'ticker').order_by('news_count',firestore.Query.DESCENDING).limit(100).stream()
         tickers = []
         for doc in query_ref:
             doc_dic = doc.to_dict()
@@ -112,10 +112,10 @@ class TrendsMaster():
         return tickers
 
     def getTagTrends(self, top_number=27):
-        todays_date = datetime.today().date().strftime("%d-%m-%Y")
-        # todays_date = '12-12-2021'
+        # todays_date = datetime.today().date().strftime("%d-%m-%Y")
+        todays_date = '15-12-2021'
 
-        query_ref = self.trend_collection.where(u'date',u'==',todays_date).where(u'type',u'==',u'tag').stream()
+        query_ref = self.trend_collection.where(u'date',u'==',todays_date).where(u'type',u'==',u'tag').order_by('news_count',firestore.Query.DESCENDING).limit(100).stream()
         tickers = []
         for doc in query_ref:
             doc_dic = doc.to_dict()

@@ -8,7 +8,8 @@ from dash.exceptions import PreventUpdate
 import os
 
 from app import app 
-from apps import backtesting, allocations, market, strategies, sentiment, macro, landing, technical
+# from apps import backtesting, allocations, market, strategies, sentiment, macro, landing, technical
+from apps import landing, technical 
 
 # image_filename = 'img/logo2_circle.png' # replace with your own image
 # encoded_image = base64.b64encode(open(image_filename, 'rb').read())
@@ -85,20 +86,20 @@ app.layout = html.Div([
 )
 
 def display_page(pathname, data):
-    if pathname == "/apps/backtesting":
-        return backtesting.layout
-    elif pathname == "/apps/allocations":
-        return allocations.layout
-    elif pathname == "/apps/sentiment":
-        return sentiment.layout
-    elif pathname == "/apps/market":
-        return market.layout
-    elif pathname == "/apps/macro":
-        return macro.layout
-    elif pathname == "/apps/strategies":
-        return strategies.load_strategy(data)
-    elif pathname == "/apps/landing":
+    if pathname == "/apps/landing":
         return landing.layout
+    # elif pathname == "/apps/allocations":
+    #     return allocations.layout
+    # elif pathname == "/apps/sentiment":
+    #     return sentiment.layout
+    # elif pathname == "/apps/market":
+    #     return market.layout
+    # elif pathname == "/apps/macro":
+    #     return macro.layout
+    # elif pathname == "/apps/strategies":
+    #     return strategies.load_strategy(data)
+    # elif pathname == "/apps/backtesting":
+    #     return backtesting.layout
     elif pathname == "/admin":
         return technical.layout
     else:
