@@ -16,7 +16,7 @@ dataset = 'us_recession_model.'
 
 def getGaugeSubplotsFig():
     print('Get data from BQ')
-    sql_query = f'SELECT index, crisis_in_3m, crisis_in_6m, crisis_in_12m, crisis_in_24m FROM {dataset}best_model_results ORDER BY index DESC LIMIT 2'
+    sql_query = f'SELECT index, crisis_within_3m, crisis_within_6m, crisis_within_12m, crisis_within_24m FROM {dataset}best_model_results ORDER BY index DESC LIMIT 2'
     model_results = pandas_gbq.read_gbq(sql_query, 
                                         project_id=project_id,
                                         index_col='index',
@@ -66,7 +66,7 @@ def getGaugeSubplotsFig():
 
 def getGaugeListOfFigs():
     print('Get data from BQ')
-    sql_query = f'SELECT index, crisis_in_3m, crisis_in_6m, crisis_in_12m, crisis_in_24m FROM {dataset}best_model_results ORDER BY index DESC LIMIT 2'
+    sql_query = f'SELECT index, crisis_within_3m, crisis_within_6m, crisis_within_12m, crisis_within_24m FROM {dataset}best_model_results ORDER BY index DESC LIMIT 2'
     model_results = pandas_gbq.read_gbq(sql_query, 
                                         project_id=project_id,
                                         index_col='index',
@@ -117,7 +117,7 @@ def getListOfFactorGroups():
 
 def getRecessionHistGraph(feature='3m'):
     print('Get data from BQ')
-    sql_query = f'SELECT index, crisis, crisis_in_{feature} FROM {dataset}best_model_results ORDER BY index DESC'
+    sql_query = f'SELECT index, crisis, crisis_within_{feature} FROM {dataset}best_model_results ORDER BY index DESC'
     model_results = pandas_gbq.read_gbq(sql_query, 
                                         project_id=project_id,
                                         index_col='index', verbose=None,progress_bar_type=None)
@@ -126,7 +126,7 @@ def getRecessionHistGraph(feature='3m'):
     model_results.sort_index(inplace=True)
     model_results = model_results.loc[datetime.date(1995,1,1):,:]
     model_results.reset_index(inplace=True)
-    model_results.rename(columns={'index':'date',f'crisis_in_{feature}':'rec_prob'},inplace=True)
+    model_results.rename(columns={'index':'date',f'crisis_within_{feature}':'rec_prob'},inplace=True)
     model_results.rec_prob = model_results.rec_prob.ewm(5).mean()
 
     
@@ -183,7 +183,10 @@ def get_LM_Card(factor_name, move_v, beta_v, delta_v):
     delta_symbol = trl_up_c if delta_v > 0 else trl_down_c
     container_type = 'lm-container-green' if move_v > 0 else 'lm-container-red'
 
-    description = f'The factor change from previous period is {str(delta_v)}%, the importance factor factored derived by the model is {str(beta_v)}.\nThe overall impact, which is a product of latest two, is equal to {str(move_v)}%'
+    description = f'The factor change from previous period is {str(delta_v)}%, \
+                    the importance factor derived by the model is \
+                    {str(beta_v)}.\nThe overall impact, which is a product of \
+                    latest two, is equal to {str(move_v)}%'
 
     factor_name = factor_name.replace('_',' ')
     card = html.Div([
@@ -218,7 +221,7 @@ def get_LM_Card(factor_name, move_v, beta_v, delta_v):
     return card
 
 def getLMCards():
-    sql_query = f'SELECT index, crisis_in_3m_x_change, crisis_in_3m_x_imp_svm, crisis_in_3m_x_combined FROM {dataset}largest_movers ORDER BY index DESC'
+    sql_query = f'SELECT index, crisis_within_1m_change, crisis_within_1m_coef, crisis_within_1m_combined FROM {dataset}largest_movers ORDER BY index DESC'
     model_results = pandas_gbq.read_gbq(sql_query,
                                         project_id=project_id,
                                         progress_bar_type=None,

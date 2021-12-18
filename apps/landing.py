@@ -163,8 +163,15 @@ layout = html.Div([
         Output("suggestions", "options"), 
         Output("suggestions", "value")
     ],
-    [Input("suggestions", "value"), Input("landing-selection", "value"),Input('ticker_graph','clickData')], 
-    [State("landing-selection", "options"), State("suggestions", "options")]
+    [
+        Input("suggestions", "value"), 
+        Input("landing-selection", "value"),
+        Input('ticker_graph','clickData')
+    ], 
+    [
+        State("landing-selection", "options"), 
+        State("suggestions", "options")
+    ]
 )
 def update_list(suggestion_values, selected_value, ticker_clickData,
                 landing_options, suggestions_options):
@@ -214,7 +221,6 @@ def update_list(suggestion_values, selected_value, ticker_clickData,
 
 def manageFactorChecklist(fct_chk_values,btn_selectall_clicks,
                             btn_selectall_text, fct_checklist_options):
-
     ctx = dash.callback_context
     if not ctx.triggered:
         button_id = 'No clicks'
@@ -236,9 +242,6 @@ def manageFactorChecklist(fct_chk_values,btn_selectall_clicks,
     else:
         return [html.Div()], ['Unselect all'], fct_chk_values
 
-
-
-
 @app.callback(
     Output("suggestions-id", "style"), 
     [Input("suggestions-toggle", "value")]
@@ -248,19 +251,6 @@ def show_hide_suggestions(toggle_value):
     if toggle_value is None or toggle_value == []:
         return {"display":"none"}
     return {"display":"flex"}
-
-# @app.callback(
-#     Output('ticker_graph','figure'),
-#     [Input('ticker_graph','hoverData')]
-# )
-
-# def trendHoverkHandle(hoverData):
-#     # print(hoverData)
-#     for shape in tickerTreeMap['layout']['shapes']:
-#         shape['line']['color'] = '#ffffff'
-#     if hoverData:
-#         tickerTreeMap['layout']['shapes'][hoverData['points'][0]['pointIndex']]['line']['color'] = '#000000' 
-#     return tickerTreeMap
 
 
 @app.callback(
