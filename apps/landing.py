@@ -4,14 +4,21 @@ from dash import dcc
 from dash import html
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
+
 from .base.charts_utils import Chart, init_chart
 from .base.api_handler import StrategiesAPI
 from .base.trend_utils import TrendsMaster
 from .base.general_utils import get_all_xtb_assets, get_ETF_from_component
-from .base.recession_indicator_utils import getGaugeSubplotsFig, getListOfFactorGroups, getGaugeListOfFigs, getRecessionHistGraph, getLMCards
+from .base.recession_indicator_utils import getGaugeSubplotsFig, getListOfFactorGroups, getGaugeListOfFigs, getRecessionHistGraph, getLMCards, checkIfTablesExists
+from .base.gcp_handler import RebuildModelPUBSUB
+
 import pandas as pd
 from app import app
 from datetime import datetime
+import time
+
+LONG_INTERVAL = 1000 * 60 * 60
+SHORT_INTERVAL = 1000 * 30
 
 df = get_all_xtb_assets()
 tm = TrendsMaster()
@@ -37,7 +44,7 @@ tagTreeMap = getTagTreeMap()
 list_of_assets = df["keywords"].unique()
 
 factor_groups = getListOfFactorGroups()
-rebuild_btn = html.Button('Rebuild', id='btn-rebuild', className='btns-general')
+# rebuild_btn = html.Button('Rebuild', id='btn-rebuild', className='btns-general')
 
 layout = html.Div([
     html.Div([
@@ -107,7 +114,13 @@ layout = html.Div([
         html.Div([
             html.H2('Recession Indicator')
         ], className='recession-indicator-title'),
-        dcc.Loading(children=[
+        html.Div([
+            dcc.Interval(
+                        id='interval-recession-indicator',
+                        interval=LONG_INTERVAL, # in milliseconds
+                        n_intervals=0),
+        ],className = 'recession-interval-holder'),
+        # html.Div(children=[
             html.Div([
                 html.Div([
                     html.H4('Factors used in a model'),
@@ -116,11 +129,13 @@ layout = html.Div([
                             html.Div([
                                 html.Button('Unselect all', id='btn-selectall-factors', className='btns-general')
                             ],id='btn-selectall-container'),
-                            html.Div(id='btn-rebuild-container'),
+                            html.Div([
+                                html.Button('Rebuild', id='btn-rebuild', className='btns-general')
+                            ],id='btn-rebuild-container'),
                         ], className='fct-btns-container'),
                         dcc.Checklist(
-                            options=[{'label':x, 'value':x} for x in factor_groups],
-                            value=factor_groups,
+                            options=[{'label':x, 'value':x} for x in factor_groups[0]],
+                            value=factor_groups[1],
                             labelClassName="fg-item",
                             id='factor-checklist'
                         )
@@ -129,27 +144,22 @@ layout = html.Div([
                 html.Div([
                     html.Div([
                         html.H4('Probability of US recession within 3M')]),
-                    html.Div([
-                        html.Div([
-                            dcc.Graph(figure=getRecessionHistGraph(), responsive=True)
-                        ],className='rec-trend-chart'),
-                        html.Div(children=[
-                            html.Div([
-                            dcc.Graph(
-                                figure=fig,
-                                config={
-                                    'displayModeBar':False
-                                },
-                                responsive=True,
-                            )],className="gauge-fig") for fig in getGaugeListOfFigs()], className="gauge-fig-container")
-                        ], className='rec-charts')
+                    html.Div(children=[
+                        dcc.Loading([
+                            # html.Div([
+                            #     getRecessionHistGraph()
+                            # ],className='rec-trend-chart'),
+                            html.Div(children=getGaugeListOfFigs(), className="gauge-fig-container", id='gaugeCharts')
+                            ])
+                    ], className='rec-charts'),
                 ], className='recession-charts-container')
             ], className='recession-factors-container'),
-            html.Div([
-                html.H4('Largest movers'),
-                html.Div(children=getLMCards(), className='lm-cards-container')
-            ], className='largest-movers-container')
-        ])
+            # html.Div([
+            #     html.H4('Largest movers'),
+            #     html.Div(children=getLMCards(), className='lm-cards-container')
+            # ], className='largest-movers-container')
+        # ], id='recession-indicator-charts-container', className='div-visible' if checkIfTablesExists() else 'div-hidden'),
+        # LOADING_MODEL('model-loading', checkIfTablesExists())
     ], className='recession-model-container'),
     html.Div(className='free-space'),
     html.Div([
@@ -205,7 +215,7 @@ def update_list(suggestion_values, selected_value, ticker_clickData,
 
 @app.callback(
     [
-        Output('btn-rebuild-container','children'),
+        Output('btn-rebuild','style'),
         Output('btn-selectall-factors','children'), 
         Output("factor-checklist","value")
     ],
@@ -230,17 +240,77 @@ def manageFactorChecklist(fct_chk_values,btn_selectall_clicks,
     all_options = [x['value'] for x in fct_checklist_options]
     if button_id == 'btn-selectall-factors':
         if btn_selectall_text[0] == 'Select all':
-            if len(set(all_options) - set(factor_groups)):
-                return [rebuild_btn], ['Unselect all'], all_options
+            if len(set(all_options) - set(factor_groups[1])):
+                return {'visibility':'visible'}, ['Unselect all'], all_options
             else:
-                return [html.Div()], ['Unselect all'], all_options
+                return {'visibility':'hidden'}, ['Unselect all'], all_options
         else:
-            return [html.Div()], ['Select all'], []
+            return {'visibility':'hidden'}, ['Select all'], []
     
-    if len(set(factor_groups) - set(fct_chk_values)):
-        return [rebuild_btn], ['Select all'], fct_chk_values
+    if set(factor_groups[1]) != set(fct_chk_values):
+        return {'visibility':'visible'}, ['Select all'], fct_chk_values
     else:
-        return [html.Div()], ['Unselect all'], fct_chk_values
+        return {'visibility':'hidden'}, ['Unselect all'], fct_chk_values
+
+
+@app.callback (
+    Output('gaugeCharts','children'),
+    Input('btn-rebuild','n_clicks'),
+    State('factor-checklist','value')
+)
+def RebuildModel(btn_clicks, groups):
+    ctx = dash.callback_context
+    if not ctx.triggered:
+        button_id = 'No clicks'
+    else:
+        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+    
+    if button_id == 'btn-rebuild':
+        attribs = {
+            'groups':','.join(groups)
+        }
+        print(attribs)
+        # RebuildModelPUBSUB(attribs)
+        time.sleep(2000)
+    return getGaugeListOfFigs()
+
+# @app.callback(
+#     [
+#         Output('recession-indicator-charts-container','className'),
+#         Output('interval-recession-indicator','interval')
+#     ],
+#     [
+#         Input('btn-rebuild','n_clicks'),
+#         Input('interval-recession-indicator','n_intervals')
+#     ],
+#     [
+#         State('factor-checklist','value')
+#     ]
+# )
+# def rebuild_model(btn_clicks, n_intervals, f_groups_list):
+#     print(btn_clicks)
+#     ctx = dash.callback_context
+#     if not ctx.triggered:
+#         button_id = 'No clicks'
+#     else:
+#         button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+#     print(button_id)
+
+#     if button_id == 'btn-rebuild':
+#         print('Rebuilding model.')
+#         data = {'groups':f_groups_list}
+#         # response = requests.post('https://recession-indicator-api-ibyah76s5q-lz.a.run.app/rebuild-model',json=data)
+#         response = requests.post('http://127.0.0.1:8070/rebuild-model',json=data)
+#         print(response.json())
+#         return 'div-hidden', SHORT_INTERVAL
+    
+#     if button_id == 'interval-recession-indicator':
+#         if checkIfTablesExists():
+#             return 'div-visible', LONG_INTERVAL
+#         else:
+#             return 'div-hidden', SHORT_INTERVAL
+
+#     raise PreventUpdate
 
 @app.callback(
     Output("suggestions-id", "style"), 

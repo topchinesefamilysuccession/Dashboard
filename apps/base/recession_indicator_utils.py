@@ -1,7 +1,9 @@
 import dash
 import dash_bootstrap_components as dbc
 from dash import html
+from dash import dcc
 
+import time
 import datetime
 import pandas_gbq
 import pandas as pd
@@ -67,11 +69,15 @@ def getGaugeSubplotsFig():
 def getGaugeListOfFigs():
     print('Get data from BQ')
     sql_query = f'SELECT index, crisis_within_3m, crisis_within_6m, crisis_within_12m, crisis_within_24m FROM {dataset}best_model_results ORDER BY index DESC LIMIT 2'
+    
+    while not checkIfTablesExists():
+        time.sleep(30)
     model_results = pandas_gbq.read_gbq(sql_query, 
-                                        project_id=project_id,
-                                        index_col='index',
-                                        verbose=None,
-                                        progress_bar_type=None)
+                                                project_id=project_id,
+                                                index_col='index',
+                                                verbose=None,
+                                                progress_bar_type=None)
+            
     model_results = round(model_results*100,2)
 
     figs = []
@@ -89,13 +95,13 @@ def getGaugeListOfFigs():
                 value = model_results[col][0],
                 number = { 'suffix': "%" },
                 domain = {'x': [0, 1], 'y': [0, 1]},
-                title = {'text': f"<b>{col.split('_')[-1].upper()}</b>", 'font':{'size':12}},
+                title = {'text': f"<b>{col.split('_')[-1].upper()}</b>", 'font':{'size':16}},
                 delta = {'reference': model_results[col][0] - model_results[col][1], 
                         'increasing': {'color': "rgba(229,57,53,1)"},
                         'decreasing': {'color': "rgba(0,178,118,1)"}},
                 gauge = {
                     'axis': {'range': [0, 100], 'visible':False},
-                    'bar': {'color': "red"},
+                    'bar': {'color': "white"},
                     'bgcolor': "white",
                     'borderwidth': 0,
                     'steps': [
@@ -105,22 +111,45 @@ def getGaugeListOfFigs():
                     }))
         fig.update_layout(layout_config)
         figs.append(fig)
-    return figs
+
+    return [html.Div([dcc.Graph(
+                                figure=fig,
+                                config={
+                                    'displayModeBar':False
+                                },
+                                responsive=True,
+                            )],className="gauge-fig") for fig in figs]
 
 def getListOfFactorGroups():
     bq_sql = f'SELECT distinct(A.group) FROM {dataset}factor_groups A'
-    factor_groups = pandas_gbq.read_gbq(bq_sql,
+    factor_groups_all = pandas_gbq.read_gbq(bq_sql,
                                         project_id=project_id,
                                         progress_bar_type=None,
                                         verbose=None)
-    return factor_groups.group.to_list()
+    factor_groups_all = factor_groups_all.group.to_list()
+
+    bq_sql = f'SELECT distinct(A.group) FROM {dataset}factor_groups A WHERE A.factor IN (SELECT DISTINCT(index) from {dataset}largest_movers)'
+    try:
+        factor_groups_selected = pandas_gbq.read_gbq(bq_sql,
+                                            project_id=project_id,
+                                            progress_bar_type=None,
+                                            verbose=None)
+        factor_groups_selected = factor_groups_selected.group.to_list()
+    except:
+        factor_groups_selected = []
+    return [factor_groups_all, factor_groups_selected]
 
 def getRecessionHistGraph(feature='3m'):
     print('Get data from BQ')
     sql_query = f'SELECT index, crisis, crisis_within_{feature} FROM {dataset}best_model_results ORDER BY index DESC'
-    model_results = pandas_gbq.read_gbq(sql_query, 
-                                        project_id=project_id,
-                                        index_col='index', verbose=None,progress_bar_type=None)
+    try:
+        model_results = pandas_gbq.read_gbq(sql_query, 
+                                            project_id=project_id,
+                                            index_col='index',
+                                            verbose=None,
+                                            progress_bar_type=None)
+    except:
+        return html.Div([html.H3('Model is being recalculated...')])
     model_results = round(model_results*100,2)
     model_results.index = pd.to_datetime(model_results.index)
     model_results.sort_index(inplace=True)
@@ -165,7 +194,7 @@ def getRecessionHistGraph(feature='3m'):
         }
 
     fig.update_layout(layout_config)
-    return fig
+    return dcc.Graph(figure=fig, responsive=True)
 
 
 def get_LM_Card(factor_name, move_v, beta_v, delta_v):
@@ -222,10 +251,14 @@ def get_LM_Card(factor_name, move_v, beta_v, delta_v):
 
 def getLMCards():
     sql_query = f'SELECT index, crisis_within_1m_change, crisis_within_1m_coef, crisis_within_1m_combined FROM {dataset}largest_movers ORDER BY index DESC'
-    model_results = pandas_gbq.read_gbq(sql_query,
-                                        project_id=project_id,
-                                        progress_bar_type=None,
-                                        verbose=None)
+    
+    try:
+        model_results = pandas_gbq.read_gbq(sql_query,
+                                            project_id=project_id,
+                                            progress_bar_type=None,
+                                            verbose=None)
+    except:
+        return html.Div([html.H3('Model is being recalculated...')])
 
     model_results = model_results.round(4)
     abs_col = model_results.columns[-1] + 'abs'
@@ -238,4 +271,17 @@ def getLMCards():
         list_of_cards.append(get_LM_Card(row[0],row[3],row[2],row[1]))
 
     return list_of_cards
-        
+
+def checkIfTablesExists():
+    sql = f"SELECT size_bytes FROM {dataset}__TABLES__ WHERE table_id IN ('largest_movers','best_model_results')"
+    table_exists = pandas_gbq.read_gbq(sql, 
+                                        project_id=project_id,
+                                        progress_bar_type=None,
+                                        verbose=None)
+    
+    if table_exists.shape[0] == 2:
+        print('Tables exist!')
+        return True
+    else:
+        print('Tables don\'t exist!')
+        return False

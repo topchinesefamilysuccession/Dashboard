@@ -105,7 +105,7 @@ def display_page(pathname, data):
     else:
         return landing.layout
 
-
+# app.config['suppress_callback_exceptions'] = True
 
 server = app.server
 
